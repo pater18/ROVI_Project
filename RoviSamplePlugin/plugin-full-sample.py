@@ -22,6 +22,18 @@ import cv2 #This might cause segfault unless you have use the "opencv-contrib-py
 
 
 import copy
+class rwsplugin(QtCore.QObject):    #inherit from this class to access RobworkStudio and QtWidget
+    def __init__(self,link):
+        def getWidget(self):             #Returns a widget to be used by PiSide2
+            pass
+        def getRobWorkStudio(self):     #Returns a pointer to RobworkStudio
+            pass
+        def getWorkCell(self):          #Returns a pointer to the currently loaded WorkCell
+            pass
+        def log(self):                  #Returns a pointer to the current Log
+            pass
+class cpp_link(QtCore.QObject):    #Class used by the cpp plugin to make calls to python plugins
+    rws_cpp_link = cpp_link #           #Object used to facilitate the calls
 
 class Plugin(rwsplugin):
     def __init__(self,link):
