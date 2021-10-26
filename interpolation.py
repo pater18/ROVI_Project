@@ -96,6 +96,9 @@ if __name__ == "__main__":
             tStatePath.push_back(sdurw.TimedState(i,state))
 
         tStatePath.save("visu.rwplay", wc)
+
+        Gripper.setQ(sdurw.Q(0.03), state)
+        tStatePath.push_back(sdurw.TimedState(3.1, state))
         print('Visualisationfile saved')
     else:
         print("No collisionfree solutions")
