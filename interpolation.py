@@ -1,4 +1,5 @@
 import sdurw
+import sdurwsim
 import sdurw_kinematics
 import sdurw_proximitystrategies
 import numpy as np
@@ -65,6 +66,7 @@ if __name__ == "__main__":
     # Find frames and check for existence
     gripper = wc.findFrame("Gripper")
 
+    controller = sdurwsim.SerialDeviceController(RobotUR6)
 
 
     q_start = RobotUR6.getQ(state)
