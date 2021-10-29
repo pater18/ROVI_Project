@@ -49,6 +49,7 @@ if __name__ == "__main__":
 
     #Load Robot
     RobotUR6 = wc.findSerialDevice("UR-6-85-5-A")
+    
     if RobotUR6.isNull():
         raise Exception ("Could not find robot")
     else :
