@@ -1,3 +1,0 @@
-/home/emilb/github/build/CMakeFiles/rebuild_cache.dir
-/home/emilb/github/build/CMakeFiles/edit_cache.dir
-/home/emilb/github/build/CMakeFiles/Interpolation.dir
