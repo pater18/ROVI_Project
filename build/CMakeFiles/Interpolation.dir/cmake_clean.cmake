@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "../bin/Interpolation"
   "../bin/Interpolation.pdb"
-  "CMakeFiles/Interpolation.dir/src/interpolation.cpp.o"
+  "CMakeFiles/Interpolation.dir/src/main.cpp.o"
 )
 
 # Per-language clean rules from dependency scanning.

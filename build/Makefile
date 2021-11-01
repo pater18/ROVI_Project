@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/emilb/roviproject_cpp/Project_WorkCell
+CMAKE_SOURCE_DIR = /home/emilb/github
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/emilb/roviproject_cpp/Project_WorkCell/build
+CMAKE_BINARY_DIR = /home/emilb/github/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/emilb/roviproject_cpp/Project_WorkCell/build/CMakeFiles /home/emilb/roviproject_cpp/Project_WorkCell/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/emilb/github/build/CMakeFiles /home/emilb/github/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/emilb/roviproject_cpp/Project_WorkCell/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/emilb/github/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -123,32 +123,32 @@ Interpolation/fast:
 	$(MAKE) -f CMakeFiles/Interpolation.dir/build.make CMakeFiles/Interpolation.dir/build
 .PHONY : Interpolation/fast
 
-src/interpolation.o: src/interpolation.cpp.o
+src/main.o: src/main.cpp.o
 
-.PHONY : src/interpolation.o
+.PHONY : src/main.o
 
 # target to build an object file
-src/interpolation.cpp.o:
-	$(MAKE) -f CMakeFiles/Interpolation.dir/build.make CMakeFiles/Interpolation.dir/src/interpolation.cpp.o
-.PHONY : src/interpolation.cpp.o
+src/main.cpp.o:
+	$(MAKE) -f CMakeFiles/Interpolation.dir/build.make CMakeFiles/Interpolation.dir/src/main.cpp.o
+.PHONY : src/main.cpp.o
 
-src/interpolation.i: src/interpolation.cpp.i
+src/main.i: src/main.cpp.i
 
-.PHONY : src/interpolation.i
+.PHONY : src/main.i
 
 # target to preprocess a source file
-src/interpolation.cpp.i:
-	$(MAKE) -f CMakeFiles/Interpolation.dir/build.make CMakeFiles/Interpolation.dir/src/interpolation.cpp.i
-.PHONY : src/interpolation.cpp.i
+src/main.cpp.i:
+	$(MAKE) -f CMakeFiles/Interpolation.dir/build.make CMakeFiles/Interpolation.dir/src/main.cpp.i
+.PHONY : src/main.cpp.i
 
-src/interpolation.s: src/interpolation.cpp.s
+src/main.s: src/main.cpp.s
 
-.PHONY : src/interpolation.s
+.PHONY : src/main.s
 
 # target to generate assembly for a file
-src/interpolation.cpp.s:
-	$(MAKE) -f CMakeFiles/Interpolation.dir/build.make CMakeFiles/Interpolation.dir/src/interpolation.cpp.s
-.PHONY : src/interpolation.cpp.s
+src/main.cpp.s:
+	$(MAKE) -f CMakeFiles/Interpolation.dir/build.make CMakeFiles/Interpolation.dir/src/main.cpp.s
+.PHONY : src/main.cpp.s
 
 # Help Target
 help:
@@ -159,9 +159,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... Interpolation"
-	@echo "... src/interpolation.o"
-	@echo "... src/interpolation.i"
-	@echo "... src/interpolation.s"
+	@echo "... src/main.o"
+	@echo "... src/main.i"
+	@echo "... src/main.s"
 .PHONY : help
 
 

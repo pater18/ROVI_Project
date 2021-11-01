@@ -1,4 +1,4 @@
-# Install script for directory: /home/emilb/roviproject_cpp/Project_WorkCell
+# Install script for directory: /home/emilb/github
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/emilb/roviproject_cpp/Project_WorkCell/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/emilb/github/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
