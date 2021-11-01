@@ -13,7 +13,7 @@
 #include <rw/trajectory.hpp>
 #include <rw/loaders/image/ImageLoader.hpp>
 #include <rw/loaders/path/PathLoader.hpp>
-
+#include "reachability.h"
 
 #include <iostream>
 #include <string>
@@ -72,90 +72,104 @@ void printDeviceNames(const WorkCell& workcell)
 
 int main(int argc, char** argv)
 {
-	//load workcell
-	rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
-	printDeviceNames(*wc);
-
-	if(NULL==wc){
-		RW_THROW("COULD NOT LOAD scene... check path!");
-		return -1;
-	}
-
-	// find relevant frames
-	rw::kinematics::Frame* cylinderFrame = wc->findFrame("Cylinder");
-	if(NULL==cylinderFrame){
-		RW_THROW("COULD not find movable frame Cylinder ... check model");
-		return -1;
-	}	
 	
-	rw::kinematics::Frame* squareFrame = wc->findFrame("Square");
-	if(NULL==cylinderFrame){
-		RW_THROW("COULD not find movable frame Cylinder ... check model");
-		return -1;
-	}
-
-	rw::models::SerialDevice::Ptr robotUR5 = wc->findDevice<rw::models::SerialDevice>("UR-6-85-5-A");
-	if(NULL==robotUR5){
-		RW_THROW("COULD not find device UR5 ... check model");
-		return -1;
-	}
-
-	rw::models::TreeDevice::Ptr Gripper = wc->findDevice<rw::models::TreeDevice>("WSG50");
-	if(NULL==Gripper){
-		RW_THROW("COULD not find device Gripper ... check model");
-		return -1;
-	}
+	reach_object();
 	
-	State state = wc->getDefaultState();
-	Gripper->setQ(rw::math::Q(0.055), state);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// //load workcell
+	// rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
+	// printDeviceNames(*wc);
 
-	// rw::models::TreeDevice* Gripper = wc->findDevice<rw::models::TreeDevice>("WSG50");
-	// rw::kinematics::Frame* grip = wc->findFrame("Gripper")
-    // if (NULL==Gripper)
-	// {
-    //     RW_THROW("COULD not find tree device WSG50 ... check model");
+	// if(NULL==wc){
+	// 	RW_THROW("COULD NOT LOAD scene... check path!");
 	// 	return -1;
 	// }
 
-    // Gripper.setQ(sdurw.Q(0.055), state)
-
+	// // find relevant frames
+	// rw::kinematics::Frame* bottleFrame = wc->findFrame("Bottle");
+	// rw::kinematics::Frame* cylinderFrame = wc->findFrame("Cylinder");
+	// rw::kinematics::Frame* squareFrame = wc->findFrame("Square");
+	// if(NULL==cylinderFrame || NULL == bottleFrame || NULL == squareFrame){
+	// 	RW_THROW("COULD not find movable frame Cylinder or Bottle or Square ... check model");
+	// 	return -1;
+	// }	
 	
-	
-	std::vector<rw::math::Q> solutions = getQConfigs("Square", robotUR5, wc, state);
-
-
-	rw::proximity::CollisionDetector::Ptr detector = rw::common::ownedPtr(new rw::proximity::CollisionDetector(wc, rwlibs::proximitystrategies::ProximityStrategyFactory::makeDefaultCollisionStrategy()));
-	std::vector<rw::math::Q> collisionFreeSolutions;
-
-
-
-	for(unsigned int i=0; i<solutions.size(); i++)
-	{
-		// set the robot in that configuration and check if it is in collision
-		robotUR5->setQ(solutions[i], state);
-		if( !detector->inCollision(state,NULL,true) )
-		{
-			collisionFreeSolutions.push_back(solutions[i]); // save it
-			 // we only need one
-		}
-	}
-	
-
-	std:: cout << "Current position of the robot vs object to be grasped has: "
-			   << collisionFreeSolutions.size()
-			   << " collision-free inverse kinematics solutions!" << std::endl;
-
-
-	// // visualize them
-	// TimedStatePath tStatePath;
-	// double time=0;
-	// for(unsigned int i=0; i<collisionFreeSolutions.size(); i++){
-	// 	robotUR5->setQ(collisionFreeSolutions[i], state);
-	// 	tStatePath.push_back(TimedState(time,state));
-	// 	time+=0.01;
+	// rw::kinematics::Frame* squareFrame = wc->findFrame("Square");
+	// if(NULL==cylinderFrame){
+	// 	RW_THROW("COULD not find movable frame Cylinder ... check model");
+	// 	return -1;
 	// }
 
-	// rw::loaders::PathLoader::storeTimedStatePath(*wc, tStatePath, "../scene/visu.rwplay");
+	// rw::models::SerialDevice::Ptr robotUR5 = wc->findDevice<rw::models::SerialDevice>("UR-6-85-5-A");
+	// if(NULL==robotUR5){
+	// 	RW_THROW("COULD not find device UR5 ... check model");
+	// 	return -1;
+	// }
+
+	// rw::models::TreeDevice::Ptr Gripper = wc->findDevice<rw::models::TreeDevice>("WSG50");
+	// if(NULL==Gripper){
+	// 	RW_THROW("COULD not find device Gripper ... check model");
+	// 	return -1;
+	// }
+	
+	// State state = wc->getDefaultState();
+	// Gripper->setQ(rw::math::Q(0.055), state);
+
+	// // rw::models::TreeDevice* Gripper = wc->findDevice<rw::models::TreeDevice>("WSG50");
+	// // rw::kinematics::Frame* grip = wc->findFrame("Gripper")
+    // // if (NULL==Gripper)
+	// // {
+    // //     RW_THROW("COULD not find tree device WSG50 ... check model");
+	// // 	return -1;
+	// // }
+
+    // // Gripper.setQ(sdurw.Q(0.055), state)
+
+	
+	
+	// std::vector<rw::math::Q> solutions = getQConfigs("Square", robotUR5, wc, state);
+
+
+	// rw::proximity::CollisionDetector::Ptr detector = rw::common::ownedPtr(new rw::proximity::CollisionDetector(wc, rwlibs::proximitystrategies::ProximityStrategyFactory::makeDefaultCollisionStrategy()));
+	// std::vector<rw::math::Q> collisionFreeSolutions;
+
+
+
+	// for(unsigned int i=0; i<solutions.size(); i++)
+	// {
+	// 	// set the robot in that configuration and check if it is in collision
+	// 	robotUR5->setQ(solutions[i], state);
+	// 	if( !detector->inCollision(state,NULL,true) )
+	// 	{
+	// 		collisionFreeSolutions.push_back(solutions[i]); // save it
+	// 		 // we only need one
+	// 	}
+	// }
+	
+
+	// std:: cout << "Current position of the robot vs object to be grasped has: "
+	// 		   << collisionFreeSolutions.size()
+	// 		   << " collision-free inverse kinematics solutions!" << std::endl;
+
+
+	// // // visualize them
+	// // TimedStatePath tStatePath;
+	// // double time=0;
+	// // for(unsigned int i=0; i<collisionFreeSolutions.size(); i++){
+	// // 	robotUR5->setQ(collisionFreeSolutions[i], state);
+	// // 	tStatePath.push_back(TimedState(time,state));
+	// // 	time+=0.01;
+	// // }
+
+	// // rw::loaders::PathLoader::storeTimedStatePath(*wc, tStatePath, "../scene/visu.rwplay");
 
 	return 0;
 }
