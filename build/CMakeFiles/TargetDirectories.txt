@@ -1,0 +1,3 @@
+/home/emilb/roviproject_cpp/Project_WorkCell/build/CMakeFiles/rebuild_cache.dir
+/home/emilb/roviproject_cpp/Project_WorkCell/build/CMakeFiles/edit_cache.dir
+/home/emilb/roviproject_cpp/Project_WorkCell/build/CMakeFiles/Interpolation.dir
