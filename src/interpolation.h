@@ -16,7 +16,6 @@
 #include <rw/trajectory/LinearInterpolator.hpp>
 
 
-#include "reachability.h"
 
 #include <iostream>
 #include <string>
@@ -125,11 +124,11 @@ int interpolateLinear()
 	rw::math::Q interpolation_step3 = rw::math::Q(0.39264, 0.46807, 0.21718, -1.55226, 0.159715, 1.80128);
 
 	
-	// std::vector<rw::math::Q> solutions = getQConfigs("Square", robotUR5, wc, state);
+	std::vector<rw::math::Q> solutions = getQConfigs("Square", robotUR5, wc, state);
 
 
-	// rw::proximity::CollisionDetector::Ptr detector = rw::common::ownedPtr(new rw::proximity::CollisionDetector(wc, rwlibs::proximitystrategies::ProximityStrategyFactory::makeDefaultCollisionStrategy()));
-	// std::vector<rw::math::Q> collisionFreeSolutions;
+	rw::proximity::CollisionDetector::Ptr detector = rw::common::ownedPtr(new rw::proximity::CollisionDetector(wc, rwlibs::proximitystrategies::ProximityStrategyFactory::makeDefaultCollisionStrategy()));
+	std::vector<rw::math::Q> collisionFreeSolutions;
 
 
 	for(unsigned int i=0; i<solutions.size(); i++)
