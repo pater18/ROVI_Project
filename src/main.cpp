@@ -15,6 +15,7 @@
 #include <rw/loaders/path/PathLoader.hpp>
 #include <rw/trajectory/LinearInterpolator.hpp>
 #include "interpolation.h"
+#include "reachability.h"
 
 
 
@@ -28,7 +29,7 @@ using namespace robwork;
 
 int main(int argc, char** argv)
 {
-	interpolateLinear();
+	reach_object();
 
 	return 0;
 }
