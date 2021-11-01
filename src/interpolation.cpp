@@ -109,17 +109,6 @@ int main(int argc, char** argv)
 	State state = wc->getDefaultState();
 	Gripper->setQ(rw::math::Q(0.055), state);
 
-	// rw::models::TreeDevice* Gripper = wc->findDevice<rw::models::TreeDevice>("WSG50");
-	// rw::kinematics::Frame* grip = wc->findFrame("Gripper")
-    // if (NULL==Gripper)
-	// {
-    //     RW_THROW("COULD not find tree device WSG50 ... check model");
-	// 	return -1;
-	// }
-
-    // Gripper.setQ(sdurw.Q(0.055), state)
-
-	
 	
 	std::vector<rw::math::Q> solutions = getQConfigs("Square", robotUR5, wc, state);
 
@@ -146,16 +135,17 @@ int main(int argc, char** argv)
 			   << " collision-free inverse kinematics solutions!" << std::endl;
 
 
-	// // visualize them
-	// TimedStatePath tStatePath;
-	// double time=0;
-	// for(unsigned int i=0; i<collisionFreeSolutions.size(); i++){
-	// 	robotUR5->setQ(collisionFreeSolutions[i], state);
-	// 	tStatePath.push_back(TimedState(time,state));
-	// 	time+=0.01;
-	// }
+	// visualize them
+	TimedStatePath tStatePath;
+	double time=0;
+	for(unsigned int i=0; i<collisionFreeSolutions.size(); i++){
+		robotUR5->setQ(collisionFreeSolutions[i], state);
+		tStatePath.push_back(TimedState(time,state));
+		time+=0.01;
+	}
 
-	// rw::loaders::PathLoader::storeTimedStatePath(*wc, tStatePath, "../scene/visu.rwplay");
+	rw::loaders::PathLoader::storeTimedStatePath(*wc, tStatePath, "../replays/visu.rwplay");
+	std::cout << "Saved a replay in folder: /replays" << std::endl;
 
 	return 0;
 }
