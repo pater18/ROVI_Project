@@ -35,7 +35,7 @@ std::vector<rw::math::Q> getQConfigs(const std::string nameGoal, rw::models::Ser
 
     rw::kinematics::Frame* frameGoal = wc->findFrame(nameGoal);
 	rw::kinematics::Frame* frameTcp = wc->findFrame("GraspTCP");
-
+	
     rw::kinematics::Frame* frameRobotBase = wc->findFrame(nameRobotBase);
     rw::kinematics::Frame* frameRobotTcp = wc->findFrame(nameRobotTcp);
     if(frameGoal==NULL || frameTcp==NULL || frameRobotBase==NULL || frameRobotTcp==NULL)
