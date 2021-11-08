@@ -29,7 +29,7 @@ using namespace robwork;
 
 int main(int argc, char** argv)
 {
-	reach_object();
+	interpolateLinear();
 
 	return 0;
 }
