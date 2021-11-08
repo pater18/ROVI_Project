@@ -15,6 +15,7 @@ set(CMAKE_VERBOSE_MAKEFILE false)
 
 # Now set the RW root
 SET(RW_ROOT $ENV{RW_ROOT})
+SET(RWS_ROOT $ENV{RW_ROOT})
 
 
 # We use the settings that robwork studio uses
@@ -25,19 +26,22 @@ ENDIF()
 #Use RobWork and RobWorkSim
 
 FIND_PACKAGE(RobWork REQUIRED)
+FIND_PACKAGE(RobWorkStudio REQUIRED)
+
 
 SET(RobWork_DIR ${RW_ROOT}/cmake) 
 INCLUDE_DIRECTORIES( ${ROBWORK_INCLUDE_DIRS} )
 LINK_DIRECTORIES( ${ROBWORK_LIBRARY_DIRS} )
 
-
-INCLUDE_DIRECTORIES( ${ROBWORK_INCLUDE_DIRS}) 
-LINK_DIRECTORIES( ${ROBWORK_LIBRARY_DIRS})
+SET(RobWorkStudio_DIR ${RWS_ROOT}/cmake) 
+INCLUDE_DIRECTORIES( ${ROBWORKSTUDIO_INCLUDE_DIRS}) 
+LINK_DIRECTORIES( ${ROBWORKSTUDIO_LIBRARY_DIRS})
 
 
 #Include RobWorkSim settings
 
 SET(CMAKE_MODULE_PATH ${RW_ROOT}/build ${CMAKE_MODULE_PATH})
+SET(CMAKE_MODULE_PATH ${RWS_ROOT}/build ${CMAKE_MODULE_PATH})
 
 # Set the output dir for generated libraries and binaries
 
@@ -59,7 +63,7 @@ file(GLOB SOURCES src/*.cpp)
 
 # LIBRARIES ---------------------------------------------------------------------------------------------------------------------------------------------
 add_executable(Interpolation ${SOURCES})
-target_link_libraries(Interpolation ${ROBWORK_LIBRARIES})
+target_link_libraries(Interpolation ${ROBWORK_LIBRARIES} ${ROBWORKSTUDIO_LIBRARIES})
 
 
 
