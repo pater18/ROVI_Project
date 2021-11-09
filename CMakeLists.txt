@@ -27,6 +27,7 @@ ENDIF()
 
 FIND_PACKAGE(RobWork REQUIRED)
 FIND_PACKAGE(RobWorkStudio REQUIRED)
+find_package(OpenCV REQUIRED)
 
 
 SET(RobWork_DIR ${RW_ROOT}/cmake) 
@@ -63,7 +64,7 @@ file(GLOB SOURCES src/*.cpp)
 
 # LIBRARIES ---------------------------------------------------------------------------------------------------------------------------------------------
 add_executable(Interpolation ${SOURCES})
-target_link_libraries(Interpolation ${ROBWORK_LIBRARIES} ${ROBWORKSTUDIO_LIBRARIES})
+target_link_libraries(Interpolation ${ROBWORK_LIBRARIES} ${ROBWORKSTUDIO_LIBRARIES} ${OpenCV_LIBS})
 
 
 

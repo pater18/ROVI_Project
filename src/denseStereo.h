@@ -16,7 +16,8 @@
 #include <rwlibs/simulation/GLFrameGrabber.hpp>
 #include <rwlibs/simulation/SimulatedCamera.hpp>
 #include <rwslibs/rwstudioapp/RobWorkStudioApp.hpp>
-
+#include "Camera.h"
+#include <opencv2/opencv.hpp>
 
 #include <iostream>
 #include <string>
@@ -39,21 +40,8 @@ int getPoseWithDenseStereo()
 		return -1;
 	}
 
-    Frame* const camera_left = wc->findFrame ("Camera_Right");
-    if (camera_left == nullptr)
-        RW_THROW ("Camera frame could not be found.");
-    const PropertyMap& properties = camera_left->getPropertyMap ();
-    if (!properties.has ("Camera"))
-        RW_THROW ("Camera frame does not have Camera property.");
-
-    const std::string parameters = properties.get< std::string > ("Camera");
-    std::istringstream iss (parameters, std::istringstream::in);
-    double fovy;
-    int width;
-    int height;
-    iss >> fovy >> width >> height;
-    std::cout << "Camera properties: fov " << fovy << " width " << width << " height " << height
-              << std::endl;
+    MyCamera camera_left("Camera_Left", wc);
+    MyCamera camera_right("Camera_Right", wc);
 
 
     RobWorkStudioApp app ("");
@@ -65,45 +53,72 @@ int getPoseWithDenseStereo()
 
         const SceneViewer::Ptr gldrawer = rwstudio->getView ()->getSceneViewer ();
 
-        const GLFrameGrabber::Ptr framegrabber = ownedPtr (new GLFrameGrabber (width, height, fovy));
+        const GLFrameGrabber::Ptr framegrabber = ownedPtr (new GLFrameGrabber (camera_left.getwidth(), camera_left.getheight(), camera_left.getfovy()));
         framegrabber->init (gldrawer);
-        SimulatedCamera::Ptr simcam =
-            ownedPtr (new SimulatedCamera ("SimulatedCamera", fovy, camera_left, framegrabber));
-        simcam->setFrameRate (100);
-        simcam->initialize ();
-        simcam->start ();
-        simcam->acquire ();
+        SimulatedCamera::Ptr simcam_left = ownedPtr (new SimulatedCamera ("SimulatedCamera", camera_left.getfovy(), camera_left.getcamera_frame(), framegrabber));
+        simcam_left->setFrameRate (100);
+        simcam_left->initialize ();
+        simcam_left->start ();
+        simcam_left->acquire ();
+        SimulatedCamera::Ptr simcam_right = ownedPtr (new SimulatedCamera ("SimulatedCamera", camera_right.getfovy(), camera_right.getcamera_frame(), framegrabber));
+        simcam_right->setFrameRate (100);
+        simcam_right->initialize ();
+        simcam_right->start ();
+        simcam_right->acquire ();
         
         static const double DT = 0.001;
         const Simulator::UpdateInfo info (DT);
         State state = wc->getDefaultState ();
         int cnt     = 0;
-        const Image* img;
-        while (!simcam->isImageReady ()) {
-            std::cout << "Image is not ready yet. Iteration " << cnt << std::endl;
-            simcam->update (info, state);
-            cnt++;
-        }
-        img = simcam->getImage ();
-        img->saveAsPPM ("Image1.ppm");
-        simcam->acquire ();
-        while (!simcam->isImageReady ()) {
-            std::cout << "Image is not ready yet. Iteration " << cnt << std::endl;
-            simcam->update (info, state);
-            cnt++;
-        }
-        std::cout << "Took " << cnt << " steps" << std::endl;
-        img = simcam->getImage ();
-        std::cout << "Image: " << img->getWidth () << "x" << img->getHeight () << " bits "
-                  << img->getBitsPerPixel () << " channels " << img->getNrOfChannels ()
-                  << std::endl;
-        img->saveAsPPM ("Image2.ppm");
+        const Image* img_left;
+        const Image* img_right;
 
-        simcam->stop ();
-        app.close ();
+        while (!simcam_left->isImageReady ()) {
+            std::cout << "Image is not ready yet. Iteration " << cnt << std::endl;
+            simcam_left->update (info, state);
+            cnt++;
+        }
+
+        while (!simcam_right->isImageReady ()) {
+        std::cout << "Image is not ready yet. Iteration " << cnt << std::endl;
+        simcam_right->update (info, state);
+        cnt++;
+        }
+        img_left = simcam_left->getImage ();
+        img_left->saveAsPPM ("image_left.ppm");
+        simcam_left->acquire ();
+        img_right = simcam_right->getImage ();
+        img_right->saveAsPPM ("image_right.ppm");
+        simcam_right->acquire ();
+
+        std::cout << "Took " << cnt << " steps" << std::endl;
+        img_left = simcam_left->getImage ();
+        std::cout << "Image: " << img_left->getWidth () << "x" << img_left->getHeight () << " bits "
+                  << img_left->getBitsPerPixel () << " channels " << img_left->getNrOfChannels ()
+                  << std::endl;
+        
+
+        simcam_left->stop ();
+        app.close ();        
     }
     RWS_END ()
  
+    cv::Mat img_left = cv::imread("../build/image_left.ppm");
+    cv::Mat img_right = cv::imread("../build/image_right.ppm");
+
+    cv::namedWindow("Car",cv::WINDOW_AUTOSIZE);
+
+    cv::imshow("Car",img_left);
+
+    cv::waitKey(0);
+
+    cv::destroyWindow("Car");
+    cv::namedWindow("Car",cv::WINDOW_AUTOSIZE);
+
+    cv::imshow("Car",img_right);
+    cv::waitKey(0);
+    cv::destroyWindow("Car");
+
 
 
 
