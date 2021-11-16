@@ -17,6 +17,7 @@
 #include <rwlibs/simulation/SimulatedCamera.hpp>
 #include <rwslibs/rwstudioapp/RobWorkStudioApp.hpp>
 #include "Camera.h"
+#include "PCL.h"
 #include <opencv2/opencv.hpp>
 
 #include <iostream>
@@ -26,7 +27,6 @@ USE_ROBWORK_NAMESPACE
 using namespace robwork;
 using namespace rwlibs::simulation;
 using namespace rws;
-
 
 
 int getPoseWithDenseStereo()
@@ -50,17 +50,17 @@ int getPoseWithDenseStereo()
         RobWorkStudio* const rwstudio = app.getRobWorkStudio ();
         rwstudio->postOpenWorkCell ("../Scene.wc.xml");
         TimerUtil::sleepMs (5000);
-
         const SceneViewer::Ptr gldrawer = rwstudio->getView ()->getSceneViewer ();
-
-        const GLFrameGrabber::Ptr framegrabber = ownedPtr (new GLFrameGrabber (camera_left.getwidth(), camera_left.getheight(), camera_left.getfovy()));
-        framegrabber->init (gldrawer);
-        SimulatedCamera::Ptr simcam_left = ownedPtr (new SimulatedCamera ("SimulatedCamera", camera_left.getfovy(), camera_left.getcamera_frame(), framegrabber));
+        const GLFrameGrabber::Ptr framegrabber_left = ownedPtr (new GLFrameGrabber (camera_left.getwidth(), camera_left.getheight(), camera_left.getfovy()));
+        const GLFrameGrabber::Ptr framegrabber_right = ownedPtr (new GLFrameGrabber (camera_right.getwidth(), camera_right.getheight(), camera_right.getfovy()));
+        framegrabber_left->init (gldrawer);
+        framegrabber_right->init (gldrawer);
+        SimulatedCamera::Ptr simcam_left = ownedPtr (new SimulatedCamera ("SimulatedCamera", camera_left.getfovy(), camera_left.getcamera_frame(), framegrabber_left));
         simcam_left->setFrameRate (100);
         simcam_left->initialize ();
         simcam_left->start ();
         simcam_left->acquire ();
-        SimulatedCamera::Ptr simcam_right = ownedPtr (new SimulatedCamera ("SimulatedCamera", camera_right.getfovy(), camera_right.getcamera_frame(), framegrabber));
+        SimulatedCamera::Ptr simcam_right = ownedPtr (new SimulatedCamera ("SimulatedCamera", camera_right.getfovy(), camera_right.getcamera_frame(), framegrabber_right));
         simcam_right->setFrameRate (100);
         simcam_right->initialize ();
         simcam_right->start ();
@@ -78,7 +78,6 @@ int getPoseWithDenseStereo()
             simcam_left->update (info, state);
             cnt++;
         }
-
         while (!simcam_right->isImageReady ()) {
         std::cout << "Image is not ready yet. Iteration " << cnt << std::endl;
         simcam_right->update (info, state);
@@ -90,6 +89,7 @@ int getPoseWithDenseStereo()
         img_right = simcam_right->getImage ();
         img_right->saveAsPPM ("image_right.ppm");
         simcam_right->acquire ();
+        
 
         std::cout << "Took " << cnt << " steps" << std::endl;
         img_left = simcam_left->getImage ();
@@ -118,6 +118,36 @@ int getPoseWithDenseStereo()
     cv::imshow("Car",img_right);
     cv::waitKey(0);
     cv::destroyWindow("Car");
+
+    cv::Mat colors = img_left;
+    cv::Mat disp;
+    while (true) {
+        int nDisparities, BlockSize;
+
+        std::cout << "Choose nDisparities: ";
+        std::cin >> nDisparities;
+        std::cout << "Choose SADWindowSize: ";
+        std::cin >> BlockSize;
+
+        
+        disp = DisparitySGBM(img_left, img_right, nDisparities, BlockSize);
+
+        auto dispNorm = normDisparity(disp);
+        cv::imshow("Stereo", dispNorm);
+        // Press esc to choose settings
+        if ( (char) 27 == (char) cv::waitKey(0) ) {
+            cv::imwrite("disparity.png", dispNorm);
+            break;
+        }
+    }
+
+	auto qMat = defineQ(img_left.cols, img_left.rows);
+    cv::Mat points = reproject3D(disp, qMat);
+    double z_threshold = 500;
+    savePointCloud("cloud.pcd", points, colors, z_threshold);
+	std::cout << "Pointcloud saved" << std::endl;
+
+
 
 
 

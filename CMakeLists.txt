@@ -1,7 +1,7 @@
 #
 # Test CMake version
 #
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.0.0)
 
 # The name of the project.
 PROJECT(roviproject)
@@ -28,6 +28,12 @@ ENDIF()
 FIND_PACKAGE(RobWork REQUIRED)
 FIND_PACKAGE(RobWorkStudio REQUIRED)
 find_package(OpenCV REQUIRED)
+#find_package(PCL 1.4 REQUIRED)
+find_package(PCL 1.4 REQUIRED COMPONENTS common io filters segmentation visualization)
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+
 
 
 SET(RobWork_DIR ${RW_ROOT}/cmake) 
@@ -64,7 +70,7 @@ file(GLOB SOURCES src/*.cpp)
 
 # LIBRARIES ---------------------------------------------------------------------------------------------------------------------------------------------
 add_executable(Interpolation ${SOURCES})
-target_link_libraries(Interpolation ${ROBWORK_LIBRARIES} ${ROBWORKSTUDIO_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(Interpolation ${ROBWORK_LIBRARIES} ${ROBWORKSTUDIO_LIBRARIES} ${OpenCV_LIBS} ${PCL_LIBRARIES})
 
 
 

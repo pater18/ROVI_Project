@@ -10,7 +10,8 @@
                 "/usr/include/x86_64-linux-gnu/qt5/QtCore",
                 "/usr/include/x86_64-linux-gnu/qt5",
                 "/usr/include/x86_64-linux-gnu/qt5/QtWidgets",
-                "/usr/include/opencv4"
+                "/usr/include/opencv4",
+                "/usr/include/pcl-1.10"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

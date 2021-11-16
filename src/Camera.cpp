@@ -3,13 +3,18 @@
 MyCamera::MyCamera (const std::string name, rw::models::WorkCell::Ptr wc)
 {
     MyCamera::name = name;
-    MyCamera::camera_frame = wc->findFrame("Camera_Left");
+    MyCamera::camera_frame = wc->findFrame(name);
     if (MyCamera::camera_frame == nullptr)
         RW_THROW ("Camera frame could not be found.");
     const PropertyMap& properties = MyCamera::camera_frame->getPropertyMap();
     if (!properties.has ("Camera"))
         RW_THROW ("Camera frame does not have Camera property.");
     
+    const std::string* ptr = MyCamera::camera_frame->getPropertyMap().getPtr<std::string>("Camera");
+    if (ptr) 
+    {
+        std::cout << "Property 'Camera' has value " << *ptr << "\n";
+    }
     const std::string parameters = properties.get< std::string > ("Camera");
     std::istringstream iss (parameters, std::istringstream::in);
 
