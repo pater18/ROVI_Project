@@ -5,7 +5,12 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/usr/include/robwork-2.3",
-                "/usr/include/eigen3"
+                "/usr/include/eigen3",
+                "/usr/include/robwork-2.1/rw",
+                "/usr/include/robwork-2.3/rw/geometry",
+                "/usr/include/robwork-2.1",
+                "/usr/include/robwork-2.1/rw/geometry",
+                "/usr/include/robwork-2.1/rw/loaders/colsetup"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

@@ -55,9 +55,11 @@ std::vector<rw::math::Q> getConfigurations(const std::string nameGoal, const std
 }
 
 
-
 void reach_object()
 {
+
+	
+
 	//load workcell
 	rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
 	if(NULL==wc){
@@ -67,6 +69,8 @@ void reach_object()
         std::cout << "Workcell is loaded" << std::endl;
     }
 
+
+	
 	// find relevant frames
 	rw::kinematics::MovableFrame::Ptr cylinderFrame = wc->findFrame<rw::kinematics::MovableFrame>("Cylinder");
     rw::kinematics::MovableFrame::Ptr botttleFrame = wc->findFrame<rw::kinematics::MovableFrame>("Bottle");
@@ -90,35 +94,40 @@ void reach_object()
 	// get the default state
 	State state = wc->getDefaultState();
 	std::vector<rw::math::Q> collisionFreeSolutions;
-
+	
+	//############################################################################################################################################
 	// To move the base of the robot on the table
 	rw::kinematics::Frame* frameRobotBase = robotUR6->getBase();
 
+	// To change the gripper position
+	rw::kinematics::Frame* Gripper = wc->findFrame("GraspTCP");
+	rw::math::Transform3D<> frameBaseTGoal = Gripper->getTransform(state);
+	rw::math::Transform3D<> Tz(rw::math::RPY<>(90*rw::math::Deg2Rad, 0, -90*rw::math::Deg2Rad).toRotation3D());
+	std::cout << frameBaseTGoal.R() << std::endl;
+	rw::math::RPY<>  values = rw::math::RPY<>(frameBaseTGoal.R());	
+	std::cout << values(0) * rw::math::Rad2Deg << " " << values(1) * rw::math::Rad2Deg << " " << values(2) * rw::math::Rad2Deg << std::endl;
+
+	// The transformation from Joint 5 to the TCP
+	// TCP: <RPY> 90 0 -90 </RPY> <Pos> 0 0 0.082 </Pos>
+	const rw::math::Vector3D<> VTCP(0, 0, 0.15);
+	const rw::math::RPY<> RTCP(90*rw::math::Deg2Rad, 0, -90*rw::math::Deg2Rad);
+	const rw::math::Transform3D<> TTCP(VTCP, RTCP.toRotation3D());
+	//############################################################################################################################################
 
 
-	//for(double rollAngle=0; rollAngle<360.0; rollAngle+=1.0){ // for every degree around the roll axis
 
-		// cylinderFrame->moveTo(
-		// 		rw::math::Transform3D<>(
-		// 				rw::math::Vector3D<>(cylinderFrame->getTransform(state).P()),
-		// 				rw::math::RPY<>(0, rollAngle*rw::math::Deg2Rad,0)
-		// 				)
-		// 		, state);
+	std::vector<rw::math::Q> solutions = getConfigurations("Cylinder", "GraspTCP", robotUR6, wc, state);
 
-
-		std::vector<rw::math::Q> solutions = getConfigurations("Square", "GraspTCP", robotUR6, wc, state);
-
-		for(unsigned int i=0; i<solutions.size(); i++){
-			// set the robot in that configuration and check if it is in collision
-			robotUR6->setQ(solutions[i], state);
-			if( !detector->inCollision(state,NULL,true) ){
-				collisionFreeSolutions.push_back(solutions[i]); // save it
-				//break; // we only need one
-			}
-
+	for(unsigned int i=0; i<solutions.size(); i++){
+		// set the robot in that configuration and check if it is in collision
+		robotUR6->setQ(solutions[i], state);
+		if( !detector->inCollision(state,NULL,true) ){
+			collisionFreeSolutions.push_back(solutions[i]); // save it
+			//break; // we only need one
 		}
 
-	//}
+	}
+
 
 	std:: cout << "Current position of the robot vs object to be grasped has: "
 			   << collisionFreeSolutions.size()
