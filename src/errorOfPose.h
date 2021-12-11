@@ -12,7 +12,7 @@ using namespace Eigen;
 USE_ROBWORK_NAMESPACE
 using namespace robwork;
 
-int calcErrorOnPose()
+int calcErrorOnPose(rw::math::Transform3D<> pose)
 {
     rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
     if(NULL==wc)
@@ -21,7 +21,7 @@ int calcErrorOnPose()
         return -1;
 	}
 
-    rw::kinematics::Frame* bottleFrame = wc->findFrame("Bottle");
+    rw::kinematics::MovableFrame::Ptr bottleFrame = wc->findFrame<rw::kinematics::MovableFrame>("Bottle");
 	if(NULL==bottleFrame)
     {
 		RW_THROW("COULD not find movable frame bottle ... check model");
@@ -48,6 +48,7 @@ int calcErrorOnPose()
 
     State state = wc->getDefaultState();
 
+    bottleFrame->moveTo(pose, state);
 
     rw::math::Transform3D<> frameWorldTScanner = rw::kinematics::Kinematics::frameTframe(tableFrame, scannerFrame, state);
     rw::math::Transform3D<> frameScannerTBottle = rw::kinematics::Kinematics::frameTframe(scannerFrame, bottleFrame, state);

@@ -23,8 +23,8 @@
 #include "Camera.h"
 #include "PCL.h"
 //#include "poseEstimate.h"
-#include <opencv2/opencv.hpp>
-#include <opencv2/features2d/features2d.hpp>
+// #include <opencv2/opencv.hpp>
+// #include <opencv2/features2d/features2d.hpp>
 
 
 
@@ -40,7 +40,7 @@ using namespace rw::math;
 
 
 
-int getPoseWithDenseStereo()
+std::vector<rw::math::Transform3D<> > getPoseWithDenseStereo()
 {
 
     rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
@@ -49,7 +49,6 @@ int getPoseWithDenseStereo()
 	if(NULL==wc)
     {
 		RW_THROW("COULD NOT LOAD scene... check path!");
-		return -1;
 	}
 
     // MyCamera camera_left("Camera_Left", wc);
@@ -76,7 +75,6 @@ int getPoseWithDenseStereo()
 	if(NULL==bottleFrame)
     {
 		RW_THROW("COULD not find movable frame bottle ... check model");
-		return -1;
 	}
 
 
@@ -269,5 +267,5 @@ int getPoseWithDenseStereo()
 
 
 
-    return 0;
+    return bottle_transformations;
 }

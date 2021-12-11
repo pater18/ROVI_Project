@@ -218,6 +218,8 @@ Matrix4f poseEstimatePCLAnders(const std::string object_name, const std::string 
     
         // Print pose
         cout << "Got the following pose:" << endl << pose << endl;
+        cout << "Inverse of pose:" << endl << pose.inverse() << endl;
+
         cout << "Inliers: " << inliers << "/" << object->size() << endl;
         cout << "RMSE: " << rmse << endl;
     } // End timing
@@ -288,6 +290,7 @@ Matrix4f poseEstimatePCLAnders(const std::string object_name, const std::string 
     
         // Print pose2
         cout << "Got the following pose2:" << endl << pose2 << endl;
+        cout << "Inverse of pose:" << endl << pose2.inverse() << endl;
         cout << "Inliers: " << inliers << "/" << object->size() << endl;
         cout << "RMSE: " << rmse << endl;
     } // End timing
