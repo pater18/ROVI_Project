@@ -14,10 +14,7 @@
 #include <rw/loaders/image/ImageLoader.hpp>
 #include <rw/loaders/path/PathLoader.hpp>
 #include <rw/trajectory/LinearInterpolator.hpp>
-#include "interpolation.h"
-#include "reachability.h"
-#include "denseStereo.h"
-#include "poseEstimate.h"
+
 #include <pcl/point_types.h>
 #include "errorOfPose.h"
 
@@ -32,10 +29,10 @@ using namespace robwork;
 using namespace std;
 using namespace pcl;
 using namespace pcl::common;
-using namespace pcl::io;
-using namespace pcl::registration;
-using namespace pcl::search;
-using namespace pcl::visualization;
+// using namespace pcl::io;
+// using namespace pcl::registration;
+// using namespace pcl::search;
+// using namespace pcl::visualization;
 using namespace Eigen;
 
 int main(int argc, char** argv)
@@ -63,7 +60,6 @@ int main(int argc, char** argv)
     }
 
 	//std::vector<rw::math::Transform3D<> > poses_actual = getPoseWithDenseStereo();
-	Matrix4f pose = poseEstimatePCLAnders("bottle.ply", "scene_clouds/cloud_scene3.pcd");
 	calcErrorOnPose(bottle_transformations[2]);
 
 	return 0;
