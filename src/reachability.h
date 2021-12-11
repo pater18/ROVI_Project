@@ -70,7 +70,7 @@ void reach_object()
 	// find relevant frames
 	rw::kinematics::MovableFrame::Ptr cylinderFrame = wc->findFrame<rw::kinematics::MovableFrame>("Cylinder");
     rw::kinematics::MovableFrame::Ptr botttleFrame = wc->findFrame<rw::kinematics::MovableFrame>("Bottle");
-    rw::kinematics::MovableFrame::Ptr squareFrame = wc->findFrame<rw::kinematics::MovableFrame>("Square");
+    //rw::kinematics::MovableFrame::Ptr squareFrame = wc->findFrame<rw::kinematics::MovableFrame>("Square");
 	if(NULL==cylinderFrame){
 		RW_THROW("COULD not find movable frame object ... check model");
 		return ;
@@ -92,7 +92,7 @@ void reach_object()
 	std::vector<rw::math::Q> collisionFreeSolutions;
 
 	// To move the base of the robot on the table
-	rw::kinematics::Frame* frameRobotBase = robotUR6->getBase();
+	//rw::kinematics::Frame* frameRobotBase = robotUR6->getBase();
 
 
 

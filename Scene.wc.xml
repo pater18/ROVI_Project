@@ -38,29 +38,16 @@
      </Drawable>
 </Frame>
 
-	<Frame name="Square" refframe="Table"  type="Movable" daf="true" >
-     <RPY> -90 0 90 </RPY> <Pos> 0.25 0.474 0.150</Pos>
-     <Drawable name="Square" refframe="Square">
-         <Polytope file="parts/square" />
-     </Drawable>
-</Frame>
-
-	<Frame name="Cylinder" refframe="Table"  type="Movable" daf="true" >
-     <RPY> -90 0 90 </RPY> <Pos> -0.25 0.474 0.150 </Pos>
-     <Drawable name="Cylinder" refframe="Cylinder">
-         <Polytope file="parts/cylinder" />
-     </Drawable>
-</Frame>
 
 <!-- Cameras -->
 
 <Frame name="Camera_Right" refframe="WORLD" type="Movable">
-	<Pos>-0.4 1.033 1.325</Pos>
+	<Pos>-0.05 1.033 1</Pos>
 	<RPY>0 0 -25</RPY>
 	<Property name="Camera" desc="[fovy,width,height]">50 640 480</Property>
 </Frame>
 <Frame name="Camera_Left" refframe="WORLD" type="Movable">
-	<Pos>0.4 1.033 1.325</Pos>
+	<Pos>0.05 1.033 1</Pos>
 	<RPY>0 0 -25</RPY>
 	<Property name="Camera" desc="[fovy,width,height]">50 640 480</Property>
 </Frame>

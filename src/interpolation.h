@@ -96,7 +96,7 @@ int interpolateLinear()
 		return -1;
 	}	
 	
-	rw::kinematics::Frame* squareFrame = wc->findFrame("Square");
+	//rw::kinematics::Frame* squareFrame = wc->findFrame("Square");
 	if(NULL==cylinderFrame){
 		RW_THROW("COULD not find movable frame Cylinder ... check model");
 		return -1;

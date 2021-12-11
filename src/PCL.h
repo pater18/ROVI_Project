@@ -22,13 +22,23 @@ cv::Mat DisparitySGBM(cv::Mat &imgL, cv::Mat &imgR, int nDisparities, int BlockS
 {
     auto sgbm = cv::StereoSGBM::create(0, nDisparities, BlockSize);
     cv::Mat disp;
+    sgbm->setMode(cv::StereoSGBM::MODE_HH);
     sgbm->compute(imgL, imgR, disp);
     return disp;
 }
+
+cv::Mat DisparityBM(cv::Mat &imgL, cv::Mat &imgR, int nDisparities, int BlockSize)
+{
+    auto bm = cv::StereoBM::create(nDisparities, BlockSize);
+    cv::Mat disp;
+    bm->compute(imgL, imgR, disp);
+    return disp;
+}
+
 cv::Mat defineQ(int img_width, int img_height)
 {
     double cx = -img_width / 2, cy = -img_height / 2;
-    double f = 500,	Tx = -100;
+    double f = 50,	Tx = 100;
 	cv::Mat Q = cv::Mat::zeros(4, 4, CV_64F);
 	Q.at<double>(0, 0) = 1;
 	Q.at<double>(1, 1) = 1;
