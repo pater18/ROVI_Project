@@ -19,6 +19,7 @@
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/surface/mls.h>
 #include <pcl/filters/passthrough.h>
+#include "preprocessing.h"
 
 using namespace std;
 using namespace pcl;
@@ -68,8 +69,7 @@ Matrix4f poseEstimatePCLAnders(const std::string object_name, const std::string 
         v.spin();
         v.close ();
     }
-
-
+    
     
     // Compute surface normals
     {
@@ -85,6 +85,9 @@ Matrix4f poseEstimatePCLAnders(const std::string object_name, const std::string 
     }
 
     spatialFilter(scene, scene);
+    preprocess(scene, scene);
+    preprocess(object, object);
+
 
     pcl::PointNormal minPt, maxPt;
     pcl::getMinMax3D (*scene, minPt, maxPt);
