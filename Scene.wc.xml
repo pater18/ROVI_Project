@@ -19,6 +19,12 @@
 	<Frame name="GraspTCP" refframe="UR-6-85-5-A.TCP" type="Fixed">
 		<RPY>0 0 0</RPY> <Pos>0 0 0.15</Pos>
 	</Frame>
+
+	<Frame name="Gripper" refframe="UR-6-85-5-A.TCP" >
+	<Pos>0 0 0.073</Pos>
+	<RPY>0 0 0</RPY>
+	</Frame>
+<Include file="wsg50/wsg50.xml" />
 	
 	<Frame name="Bottle" refframe="Table"  type="Movable" daf="true" >
      <RPY> -90 0 90 </RPY> <Pos> 0 0.474 0.21 </Pos>
@@ -27,19 +33,6 @@
      </Drawable>
 </Frame>
 
-	<Frame name="Square" refframe="Table"  type="Movable" daf="true" >
-     <RPY> -90 0 90 </RPY> <Pos> 0.25 0.474 0.150</Pos>
-     <Drawable name="Square" refframe="Square">
-         <Polytope file="parts/square" />
-     </Drawable>
-</Frame>
-
-	<Frame name="Cylinder" refframe="Table"  type="Movable" daf="true" >
-     <RPY> -90 0 90 </RPY> <Pos> -0.25 0.474 0.150 </Pos>
-     <Drawable name="Cylinder" refframe="Cylinder">
-         <Polytope file="parts/cylinder" />
-     </Drawable>
-</Frame>
 
 <!-- Obstacles -->
 
@@ -93,3 +86,9 @@
 <CollisionSetup file="SceneCollisionSetup.prox.xml" /> 
 
 </WorkCell>
+
+
+
+
+
+

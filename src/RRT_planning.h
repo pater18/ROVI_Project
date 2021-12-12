@@ -124,7 +124,7 @@ int interpolateLinear()
 	rw::math::Q interpolation_step1 = rw::math::Q(0.824267, -2.68465, -0.831859, -2.76666, 2.39506, -0);
 	rw::math::Q interpolation_step2 = rw::math::Q(0.39264, 0.46807, 0.21718, -1.55226, 0.159715, 1.80128);
 	rw::math::Q interpolation_step3 = rw::math::Q(0.39264, 0.46807, 0.21718, -1.55226, 0.159715, 1.80128);
-	rw::math::Q test = rw::math::Q(-1.904, -0.429, 1.048, -2.427, -1.714, 0);
+	rw::math::Q test = rw::math::Q(-2.476, -0.809, 0, -1.571, 0, 0);
 
 	std::vector<rw::math::Q> solutions = getQConfigs("Bottle", robotUR5, wc, state);
 
@@ -183,8 +183,8 @@ int interpolateLinear()
 
 		rw::core::Ptr< QSampler > sampler = rw::pathplanning::QSampler::makeUniform(robotUR5);
 		VMetricPtr metric = MetricFactory::makeEuclidean<V>();
-    	const QToQPlanner::Ptr planner = RRTPlanner::makeQToQPlanner (con, sampler, metric, 0.2, rwlibs::pathplanners::RRTPlanner::PlannerType::RRTConnect);    
-    	//const QToQPlanner::Ptr planner = RRTPlanner::makeQToQPlanner (con, robotUR5, rwlibs::pathplanners::RRTPlanner::PlannerType::RRTConnect);    
+    	//const QToQPlanner::Ptr planner = RRTPlanner::makeQToQPlanner (con, sampler, metric, 0.2, rwlibs::pathplanners::RRTPlanner::PlannerType::RRTConnect);    
+    	const QToQPlanner::Ptr planner = RRTPlanner::makeQToQPlanner (con, robotUR5, rwlibs::pathplanners::RRTPlanner::PlannerType::RRTConnect);    
 
 	    ProximityData pdata;
 		robotUR5->setQ (start_q, state);
