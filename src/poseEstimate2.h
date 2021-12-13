@@ -67,7 +67,7 @@ void poseEstimatePCL(const std::string object_name, const std::string scene_name
     pcl::console::print_error ("Error loading object/scene file!\n");
   }
 
-  
+  std::cout << scene->height << std::endl << scene->width << std::endl;
   // {
   //     PCLVisualizer v("Before global alignment");
   //     v.addPointCloud<PointT>(object, PointCloudColorHandlerCustom<PointT>(object, 0, 255, 0), "object");
@@ -99,6 +99,7 @@ void poseEstimatePCL(const std::string object_name, const std::string scene_name
   spatialFilter2(scene, scene);
 
 
+
   // Estimate features
   pcl::console::print_highlight ("Estimating features...\n");
   FeatureEstimationT fest;
@@ -111,7 +112,7 @@ void poseEstimatePCL(const std::string object_name, const std::string scene_name
   fest.compute (*scene_features);
 
 
-    
+
     
   
   // Perform alignment
