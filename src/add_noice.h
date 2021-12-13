@@ -13,6 +13,7 @@
 #include <pcl/point_types.h>
 
 
+
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/filters/convolution_3d.h>
@@ -56,15 +57,18 @@ void addNoice(const std::string object_name, const std::string scene_name )
     pcl::PointCloud<PointT>::Ptr scene(new pcl::PointCloud<PointT>);
     pcl::io::loadPCDFile<PointT> (scene_name, *scene);
 
-    PointCloud<PointT>::Ptr scene_filtered (new PointCloud<PointT> ());
-    scene_filtered->points.resize (scene->points.size ());
-
     spatialFilter(scene, scene);
+
+
+    pcl::PointCloud<PointT>::Ptr scene_filtered (new pcl::PointCloud<PointT> ());
+    scene_filtered->points.resize (scene->points.size());
+
 
     {
         PCLVisualizer v("Before global alignment");
         v.addPointCloud<PointT>(scene, PointCloudColorHandlerCustom<PointT>(scene, 255, 0, 0), "scene");
         v.spin();
+        v.close();
     }
 
     std::default_random_engine generator;
