@@ -1,4 +1,5 @@
 
+
 //#include <rw/rw.hpp>
 #include <rw/invkin.hpp>
 #include <rwlibs/proximitystrategies/ProximityStrategyFactory.hpp>
@@ -20,6 +21,9 @@
 #include "poseEstimate.h"
 #include <pcl/point_types.h>
 #include "errorOfPose.h"
+
+
+
 
 
 
@@ -64,6 +68,9 @@ int main(int argc, char** argv)
 
 	//std::vector<rw::math::Transform3D<> > poses_actual = getPoseWithDenseStereo();
 	Matrix4f pose = poseEstimatePCLAnders("bottle.ply", "scene_clouds/cloud_scene3.pcd");
+	//poseEstimatePCL("bottle.ply", "scene_clouds/cloud_scene3.pcd");
+
+    Matrix4f pose;    
     for (size_t i = 0; i < bottle_transformations.size(); i++)
     {
         calcErrorOnPose(bottle_transformations[i], pose);

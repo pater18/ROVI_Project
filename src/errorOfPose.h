@@ -63,8 +63,8 @@ int calcErrorOnPose(rw::math::Transform3D<> pose, Matrix4f pose_esti)
     rw::math::Transform3D<> frameScannerTTable = rw::kinematics::Kinematics::frameTframe(scannerFrame, tableFrame, state);
     rw::math::Transform3D<> frameTableTWorld = rw::kinematics::Kinematics::frameTframe(tableFrame, worldFrame, state);
 
-    Matrix4f frameScannerTTable_e = frameScannerTTable.e();
-    Matrix4f frameTableTWorld_e = frameTableTWorld.e();
+    // Matrix4f frameScannerTTable_e = frameScannerTTable.e();
+    // Matrix4f frameTableTWorld_e = frameTableTWorld.e();
 
     //std::cout << frameWorldTTable << std::endl;
     //std::cout << frameTableTScanner << std::endl;

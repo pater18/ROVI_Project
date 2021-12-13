@@ -12,9 +12,9 @@ using namespace std;
 using namespace pcl;
 using namespace pcl::common;
 using namespace pcl::io;
-using namespace pcl::registration;
+//using namespace pcl::registration;
 using namespace pcl::search;
-using namespace pcl::visualization;
+//using namespace pcl::visualization;
 using namespace Eigen;
 
 typedef PointNormal PointT;
