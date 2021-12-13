@@ -55,7 +55,9 @@ void addNoice(const std::string object_name, const std::string scene_name )
 
     // Load
     pcl::PointCloud<PointT>::Ptr scene(new pcl::PointCloud<PointT>);
-    pcl::io::loadPCDFile<PointT> (scene_name, *scene);
+    pcl::io::loadPCDFile<PointT> (scene_name, *scene); 
+    pcl::PointCloud<PointT>::Ptr object(new pcl::PointCloud<PointT>);
+    pcl::io::loadPLYFile<PointT> (object_name, *scene);
 
     spatialFilter(scene, scene);
 
@@ -67,6 +69,7 @@ void addNoice(const std::string object_name, const std::string scene_name )
     {
         PCLVisualizer v("Before global alignment");
         v.addPointCloud<PointT>(scene, PointCloudColorHandlerCustom<PointT>(scene, 255, 0, 0), "scene");
+        v.addPointCloud<PointT>(object, PointCloudColorHandlerCustom<PointT>(object, 0, 255, 0), "object");
         v.spin();
         v.close();
     }
