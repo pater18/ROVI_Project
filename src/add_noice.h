@@ -13,13 +13,16 @@
 #include <pcl/point_types.h>
 
 
-
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/filters/convolution_3d.h>
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/surface/mls.h>
 #include <pcl/filters/passthrough.h>
+#include <random>
+
+
+
 
 
 using namespace std;
@@ -59,11 +62,7 @@ void addNoice(const std::string object_name, const std::string scene_name )
     pcl::PointCloud<PointT>::Ptr object(new pcl::PointCloud<PointT>);
     pcl::io::loadPLYFile<PointT> (object_name, *scene);
 
-    spatialFilter(scene, scene);
 
-
-    pcl::PointCloud<PointT>::Ptr scene_filtered (new pcl::PointCloud<PointT> ());
-    scene_filtered->points.resize (scene->points.size());
 
 
     {
@@ -73,6 +72,9 @@ void addNoice(const std::string object_name, const std::string scene_name )
         v.spin();
         v.close();
     }
+
+    pcl::PointCloud<PointT>::Ptr scene_filtered (new pcl::PointCloud<PointT> ());
+    scene_filtered->points.resize (scene->points.size());
 
     std::default_random_engine generator;
     std::normal_distribution<double> distribution(0.01, 0.02);
@@ -86,7 +88,7 @@ void addNoice(const std::string object_name, const std::string scene_name )
 
     {
         PCLVisualizer v("Before global alignment");
-        v.addPointCloud<PointT>(scene, PointCloudColorHandlerCustom<PointT>(scene, 255, 0, 0), "scene");
+        v.addPointCloud<PointT>(scene_filtered, PointCloudColorHandlerCustom<PointT>(scene_filtered, 0, 255, 0), "scene");
         v.spin();
     }
 }
