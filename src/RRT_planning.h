@@ -86,17 +86,16 @@ void interpolateBetweenPoints(rw::trajectory::LinearInterpolator<rw::math::Q> in
 		}
 }
 
-void RRTp2p(rw::math::Q from, rw::math::Q to, rw::models::SerialDevice::Ptr robot, rw::trajectory::TimedStatePath &tStatePath, double &current_time, rw::kinematics::State state)
+void RRTp2p(rw::math::Q from, rw::math::Q to, rw::models::SerialDevice::Ptr robot, rw::proximity::CollisionDetector::Ptr detector, rw::trajectory::TimedStatePath &tStatePath, double &current_time, rw::kinematics::State state)
 {
-	rw::proximity::CollisionDetector::Ptr detector = rw::common::ownedPtr(new rw::proximity::CollisionDetector(wc, rwlibs::proximitystrategies::ProximityStrategyFactory::makeCollisionStrategy ("PQP")));
 	typedef rw::math::Q V;
 	typedef Ptr<Metric<V>> VMetricPtr;
 	const PlannerConstraint con = PlannerConstraint::make(detector, robot, state);
 
 	rw::core::Ptr<QSampler> sampler = rw::pathplanning::QSampler::makeUniform(robot);
 	VMetricPtr metric = MetricFactory::makeEuclidean<V>();
-	//const QToQPlanner::Ptr planner = RRTPlanner::makeQToQPlanner (con, sampler, metric, 0.2, rwlibs::pathplanners::RRTPlanner::PlannerType::RRTConnect);
-	const QToQPlanner::Ptr planner = RRTPlanner::makeQToQPlanner(con, robot, rwlibs::pathplanners::RRTPlanner::PlannerType::RRTConnect);
+	//const QToQPlanner::Ptr planner = RRTPlanner::makeQToQPlanner (con, sampler, metric, 2, rwlibs::pathplanners::RRTPlanner::PlannerType::RRTConnect);
+	const QToQPlanner::Ptr planner = RRTPlanner::makeQToQPlanner(con, robot, rwlibs::pathplanners::RRTPlanner::PlannerType::RRTBalancedBidirectional);
 
 	ProximityData pdata;
 	robot->setQ(from, state);
@@ -106,23 +105,31 @@ void RRTp2p(rw::math::Q from, rw::math::Q to, rw::models::SerialDevice::Ptr robo
 	if (detector->inCollision(state, pdata))
 		RW_THROW("Final configuration in collision! can not plan a path.");
 
-	std::cout << " here" << std::endl;
 
-	QPath result;
+	QPath rrt_points;
 
-	if (planner->query(from, to, result))
+	if (planner->query(from, to, rrt_points))
 	{
-		std::cout << "Planned path with " << result.size();
+		std::cout << "Planned path with " << rrt_points.size();
 		std::cout << " configurations" << std::endl;
 	}
 
-	for (int i = 0; i < result.size(); i++)
+	// for (int i = 0; i < result.size(); i++)
+	// {
+	// 	std::cout << result[i] << std::endl;
+	// }
+
+	for (size_t i = 0; i < rrt_points.size() - 1; i++)
 	{
-		std::cout << result[i] << std::endl;
+		rw::trajectory::LinearInterpolator<rw::math::Q> interpolated_points(rrt_points[i], rrt_points[i + 1], 0.1);
+		interpolateBetweenPoints(interpolated_points, robot, tStatePath, current_time, state);
+		std::cout <<tStatePath.size() << std::endl;
 	}
+
+
 }
 
-int interpolateLinear()
+int rrtPlanning()
 {
 	//load workcell
 	rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
@@ -175,7 +182,7 @@ int interpolateLinear()
     std::vector<rw::math::Q> collisionFreeSolutions;
 
 
-	for(unsigned int i=0; i<solutions.size(); i++)
+	for(unsigned int i=0; i<solutions.size() - 1; i++)
 	{
 		// set the robot in that configuration and check if it is in collision
 		robotUR5->setQ(solutions[i], state);
@@ -199,22 +206,21 @@ int interpolateLinear()
 		rw::trajectory::TimedStatePath tStatePath;
 		double time = 0;
 
-		rw::kinematics::Frame* frameRobotTcp = wc->findFrame(robotUR5->getName() + ".TCP");
-		if (bottleFrame == NULL || frameRobotTcp == NULL)
-		{
-			std::cout << "One of the frames not found!!!" << std::endl;
-		}
-	    if( Kinematics::isDAF( bottleFrame ) )
-		{
-       		// attach mframe to end of serial device
-       		Kinematics::gripFrame(bottleFrame, robotUR5->getEnd(), state);
-    	}
+		RRTp2p(start_q, test, robotUR5, detector, tStatePath, time, state);
 
+		
 
-   
+		// rw::kinematics::Frame* frameRobotTcp = wc->findFrame(robotUR5->getName() + ".TCP");
+		// if (bottleFrame == NULL || frameRobotTcp == NULL)
+		// {
+		// 	std::cout << "One of the frames not found!!!" << std::endl;
+		// }
+	    // if( Kinematics::isDAF( bottleFrame ) )
+		// {
+       	// 	// attach mframe to end of serial device
+       	// 	Kinematics::gripFrame(bottleFrame, robotUR5->getEnd(), state);
+    	// }
 
-
-    
 
 
 
