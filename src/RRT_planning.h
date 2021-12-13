@@ -86,6 +86,42 @@ void interpolateBetweenPoints(rw::trajectory::LinearInterpolator<rw::math::Q> in
 		}
 }
 
+void RRTp2p(rw::math::Q from, rw::math::Q to, rw::models::SerialDevice::Ptr robot, rw::trajectory::TimedStatePath &tStatePath, double &current_time, rw::kinematics::State state)
+{
+	rw::proximity::CollisionDetector::Ptr detector = rw::common::ownedPtr(new rw::proximity::CollisionDetector(wc, rwlibs::proximitystrategies::ProximityStrategyFactory::makeCollisionStrategy ("PQP")));
+	typedef rw::math::Q V;
+	typedef Ptr<Metric<V>> VMetricPtr;
+	const PlannerConstraint con = PlannerConstraint::make(detector, robot, state);
+
+	rw::core::Ptr<QSampler> sampler = rw::pathplanning::QSampler::makeUniform(robot);
+	VMetricPtr metric = MetricFactory::makeEuclidean<V>();
+	//const QToQPlanner::Ptr planner = RRTPlanner::makeQToQPlanner (con, sampler, metric, 0.2, rwlibs::pathplanners::RRTPlanner::PlannerType::RRTConnect);
+	const QToQPlanner::Ptr planner = RRTPlanner::makeQToQPlanner(con, robot, rwlibs::pathplanners::RRTPlanner::PlannerType::RRTConnect);
+
+	ProximityData pdata;
+	robot->setQ(from, state);
+	if (detector->inCollision(state, pdata))
+		RW_THROW("Initial configuration in collision! can not plan a path.");
+	robot->setQ(to, state);
+	if (detector->inCollision(state, pdata))
+		RW_THROW("Final configuration in collision! can not plan a path.");
+
+	std::cout << " here" << std::endl;
+
+	QPath result;
+
+	if (planner->query(from, to, result))
+	{
+		std::cout << "Planned path with " << result.size();
+		std::cout << " configurations" << std::endl;
+	}
+
+	for (int i = 0; i < result.size(); i++)
+	{
+		std::cout << result[i] << std::endl;
+	}
+}
+
 int interpolateLinear()
 {
 	//load workcell
@@ -163,8 +199,6 @@ int interpolateLinear()
 		rw::trajectory::TimedStatePath tStatePath;
 		double time = 0;
 
-
-
 		rw::kinematics::Frame* frameRobotTcp = wc->findFrame(robotUR5->getName() + ".TCP");
 		if (bottleFrame == NULL || frameRobotTcp == NULL)
 		{
@@ -177,36 +211,9 @@ int interpolateLinear()
     	}
 
 
-		typedef rw::math::Q V;
-	    typedef Ptr<Metric<V> > VMetricPtr;
-		const PlannerConstraint con = PlannerConstraint::make(detector, robotUR5, state);
+   
 
-		rw::core::Ptr< QSampler > sampler = rw::pathplanning::QSampler::makeUniform(robotUR5);
-		VMetricPtr metric = MetricFactory::makeEuclidean<V>();
-    	//const QToQPlanner::Ptr planner = RRTPlanner::makeQToQPlanner (con, sampler, metric, 0.2, rwlibs::pathplanners::RRTPlanner::PlannerType::RRTConnect);    
-    	const QToQPlanner::Ptr planner = RRTPlanner::makeQToQPlanner (con, robotUR5, rwlibs::pathplanners::RRTPlanner::PlannerType::RRTConnect);    
 
-	    ProximityData pdata;
-		robotUR5->setQ (start_q, state);
-		if (detector->inCollision (state, pdata))
-			RW_THROW ("Initial configuration in collision! can not plan a path.");
-		robotUR5->setQ (test, state);
-		if (detector->inCollision (state, pdata))
-			RW_THROW ("Final configuration in collision! can not plan a path.");
-
-		std::cout << " here" << std::endl;
-
-		QPath result;
-		
-		if (planner->query (start_q, test, result)) {
-			std::cout << "Planned path with " << result.size ();
-			std::cout << " configurations" << std::endl;
-		}
-
-		for (int i = 0; i < result.size(); i++)
-		{
-			std::cout << result[i] << std::endl;
-		}
     
 
 
