@@ -41,7 +41,7 @@ using namespace Eigen;
 int main(int argc, char** argv)
 {
 	
-	addNoice("bottle2.ply", "scene_clouds/cloud_scene3.pcd");
+	addNoice("bottle.ply", "scene_clouds/cloud_scene3.pcd");
 
 	return 0;
 }

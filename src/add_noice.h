@@ -11,6 +11,7 @@
 #include <pcl/visualization/pcl_visualizer.h>
 #include <iostream>
 #include <pcl/point_types.h>
+#include <pcl/io/file_io.h>
 
 
 #include <pcl/filters/voxel_grid.h>
@@ -36,6 +37,7 @@ using namespace Eigen;
 
 
 typedef PointNormal PointT;
+//typedef pcl::PointXYZ PointT;
 
 void spatialFilter( pcl::PointCloud<PointT>::Ptr input_cloud, pcl::PointCloud<PointT>::Ptr &output_cloud )
 {
@@ -57,38 +59,50 @@ void addNoice(const std::string object_name, const std::string scene_name )
 {
 
     // Load
-    pcl::PointCloud<PointT>::Ptr scene(new pcl::PointCloud<PointT>);
-    pcl::io::loadPCDFile<PointT> (scene_name, *scene); 
     pcl::PointCloud<PointT>::Ptr object(new pcl::PointCloud<PointT>);
-    pcl::io::loadPLYFile<PointT> (object_name, *scene);
-
-
-
+    pcl::PointCloud<PointT>::Ptr scene(new pcl::PointCloud<PointT>);
+    pcl::io::loadPLYFile<PointT> (object_name, *object);
+    pcl::io::loadPCDFile<PointT> (scene_name, *scene);
 
     {
         PCLVisualizer v("Before global alignment");
-        v.addPointCloud<PointT>(scene, PointCloudColorHandlerCustom<PointT>(scene, 255, 0, 0), "scene");
         v.addPointCloud<PointT>(object, PointCloudColorHandlerCustom<PointT>(object, 0, 255, 0), "object");
+        v.addPointCloud<PointT>(scene, PointCloudColorHandlerCustom<PointT>(scene, 255, 0, 0),"scene");
         v.spin();
-        v.close();
+        v.close ();
     }
-
-    pcl::PointCloud<PointT>::Ptr scene_filtered (new pcl::PointCloud<PointT> ());
+    
+    pcl::PointCloud<PointT>::Ptr scene_filtered(new pcl::PointCloud<PointT>);
     scene_filtered->points.resize (scene->points.size());
+    scene_filtered->header = scene->header;
+    scene_filtered->width = scene->width;
+    scene_filtered->height = scene->height;
+
+    std::cout << "here" << std::endl;
 
     std::default_random_engine generator;
-    std::normal_distribution<double> distribution(0.01, 0.02);
+    std::normal_distribution<float> distribution(0.001, 0.002);
 
-    for (size_t point_i = 0; point_i < scene->points.size(); ++point_i)
+    for (size_t point_i = 0; point_i < scene->points.size(); point_i++)
     {
-        scene_filtered->points[point_i].x = scene->points[point_i].x + static_cast<float>(distribution(generator));
-        scene_filtered->points[point_i].y = scene->points[point_i].y + static_cast<float>(distribution(generator));
-        scene_filtered->points[point_i].z = scene->points[point_i].z + static_cast<float>(distribution(generator));
+        scene_filtered->points[point_i].x = scene->points[point_i].x + (distribution(generator));
+        scene_filtered->points[point_i].y = scene->points[point_i].y + (distribution(generator));
+        scene_filtered->points[point_i].z = scene->points[point_i].z + (distribution(generator));
     }
 
+    std::cout << "here2" << scene_filtered->points[10].y << std::endl;
+    std::cout << "here2" << scene->points[10].y << std::endl;
+    std::cout << "here2" << scene->points.size() << std::endl;
+    std::cout << "here2" << scene_filtered->points.size() << std::endl;
+    std::cout << "here2" << scene->points.size() << " " << distribution(generator) << std::endl;
+
+    // pcl::io::savePCDFileASCII("test_cloud.pcd", scene_filtered);
+    pcl::io::savePCDFile ("test_pcd.pcd", *scene_filtered);
+
     {
-        PCLVisualizer v("Before global alignment");
-        v.addPointCloud<PointT>(scene_filtered, PointCloudColorHandlerCustom<PointT>(scene_filtered, 0, 255, 0), "scene");
+        PCLVisualizer v("Before global alignment2");
+        v.addPointCloud<PointT>(scene_filtered, PointCloudColorHandlerCustom<PointT>(scene_filtered, 255, 0, 0),"scene2");
         v.spin();
+        v.close ();
     }
 }
