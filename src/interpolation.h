@@ -71,11 +71,11 @@ void printDeviceNames(const WorkCell& workcell)
 void interpolateBetweenPoints(rw::trajectory::LinearInterpolator<rw::math::Q> interpolated_points, rw::models::SerialDevice::Ptr robot, rw::trajectory::TimedStatePath &tStatePath, double &current_time, rw::kinematics::State state)
 {
 	for(float i=0.0; i<interpolated_points.duration(); i += 0.01)
-		{
-			robot->setQ(interpolated_points.x(i), state);
-			tStatePath.push_back(rw::trajectory::TimedState(current_time, state));
-			current_time += 0.01;
-		}
+	{
+		robot->setQ(interpolated_points.x(i), state);
+		tStatePath.push_back(rw::trajectory::TimedState(current_time, state));
+		current_time += 0.01;
+	}
 }
 
 int interpolateLinear()
