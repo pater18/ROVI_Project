@@ -75,7 +75,7 @@ void addNoice(const std::string object_name, const std::string scene_name )
     }
 
     std::default_random_engine generator;
-    std::normal_distribution<double> distribution(0.01,0.02);
+    std::normal_distribution<double> distribution(0.01, 0.02);
 
     for (size_t point_i = 0; point_i < scene->points.size(); ++point_i)
     {
