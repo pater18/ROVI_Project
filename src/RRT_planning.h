@@ -167,7 +167,6 @@ int rrtPlanning()
 	rw::math::Q interpolation_step1 = rw::math::Q(0.824267, -2.68465, -0.831859, -2.76666, 2.39506, -0);
 	rw::math::Q interpolation_step2 = rw::math::Q(0.39264, 0.46807, 0.21718, -1.55226, 0.159715, 1.80128);
 	rw::math::Q interpolation_step3 = rw::math::Q(0.39264, 0.46807, 0.21718, -1.55226, 0.159715, 1.80128);
-	rw::math::Q test = rw::math::Q(-2.476, -0.809, 0, -1.571, 0, 0);
 
 	std::vector<rw::math::Q> solutions = getQConfigs("Bottle", robotUR5, wc, state);
 
@@ -206,7 +205,7 @@ int rrtPlanning()
 		rw::trajectory::TimedStatePath tStatePath;
 		double time = 0;
 
-		RRTp2p(start_q, test, robotUR5, detector, tStatePath, time, state);
+		RRTp2p(start_q, collisionFreeSolutions[0], robotUR5, detector, tStatePath, time, state);
 
 		
 
