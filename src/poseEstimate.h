@@ -221,8 +221,6 @@ Matrix4f poseEstimatePCLAnders(const std::string object_name, const std::string 
     
         // Print pose
         cout << "Got the following pose:" << endl << pose << endl;
-        cout << "Inverse of pose:" << endl << pose.inverse() << endl;
-
         cout << "Inliers: " << inliers << "/" << object->size() << endl;
         cout << "RMSE: " << rmse << endl;
     } // End timing
@@ -293,7 +291,6 @@ Matrix4f poseEstimatePCLAnders(const std::string object_name, const std::string 
     
         // Print pose2
         cout << "Got the following pose2:" << endl << pose2 << endl;
-        cout << "Inverse of pose:" << endl << pose2.inverse() << endl;
         cout << "Inliers: " << inliers << "/" << object->size() << endl;
         cout << "RMSE: " << rmse << endl;
     } // End timing
@@ -305,6 +302,14 @@ Matrix4f poseEstimatePCLAnders(const std::string object_name, const std::string 
         v.addPointCloud<PointNormal>(scene, PointCloudColorHandlerCustom<PointNormal>(scene, 255, 0, 0),"scene");
         v.spin();
     }
+
+    //Matrix4f final_inverse = pose * pose2;
+    //final_inverse = final_inverse.inverse();
+
+    std::cout << "Final pose :" << std::endl << pose * pose2 << std::endl;
+    std::cout << "Final pose inverse :" << std::endl << (pose * pose2).inverse() << std::endl;
+    //std::cout << "Final pose inverse :" << std::endl << final_inverse << std::endl;
+
     
     return pose2;
 }

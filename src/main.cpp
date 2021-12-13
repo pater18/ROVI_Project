@@ -64,7 +64,12 @@ int main(int argc, char** argv)
 
 	//std::vector<rw::math::Transform3D<> > poses_actual = getPoseWithDenseStereo();
 	Matrix4f pose = poseEstimatePCLAnders("bottle.ply", "scene_clouds/cloud_scene3.pcd");
-	calcErrorOnPose(bottle_transformations[2]);
+    for (size_t i = 0; i < bottle_transformations.size(); i++)
+    {
+        calcErrorOnPose(bottle_transformations[i], pose);
+
+    }
+	
 
 	return 0;
 }

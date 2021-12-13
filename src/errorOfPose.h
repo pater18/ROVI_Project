@@ -12,7 +12,7 @@ using namespace Eigen;
 USE_ROBWORK_NAMESPACE
 using namespace robwork;
 
-int calcErrorOnPose(rw::math::Transform3D<> pose)
+int calcErrorOnPose(rw::math::Transform3D<> pose, Matrix4f pose_esti)
 {
     rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
     if(NULL==wc)
@@ -34,6 +34,13 @@ int calcErrorOnPose(rw::math::Transform3D<> pose)
 		RW_THROW("COULD not find movable frame table ... check model");
 		return -1;
 	}	
+    
+    rw::kinematics::Frame* worldFrame = wc->findFrame("WORLD");
+	if(NULL==worldFrame)
+    {
+		RW_THROW("COULD not find movable frame WORLD ... check model");
+		return -1;
+	}	
 
     rw::kinematics::Frame* scannerFrame = wc->findFrame("Scanner25D");
 	if(NULL==scannerFrame)
@@ -50,19 +57,27 @@ int calcErrorOnPose(rw::math::Transform3D<> pose)
 
     bottleFrame->moveTo(pose, state);
 
-    rw::math::Transform3D<> frameWorldTScanner = rw::kinematics::Kinematics::frameTframe(tableFrame, scannerFrame, state);
+    rw::math::Transform3D<> frameWorldTTable = rw::kinematics::Kinematics::frameTframe(worldFrame, tableFrame, state);
+    rw::math::Transform3D<> frameTableTScanner = rw::kinematics::Kinematics::frameTframe(tableFrame, scannerFrame, state);
     rw::math::Transform3D<> frameScannerTBottle = rw::kinematics::Kinematics::frameTframe(scannerFrame, bottleFrame, state);
-    std::cout << frameWorldTScanner * frameScannerTBottle  << std::endl;
+    rw::math::Transform3D<> frameScannerTTable = rw::kinematics::Kinematics::frameTframe(scannerFrame, tableFrame, state);
+    rw::math::Transform3D<> frameTableTWorld = rw::kinematics::Kinematics::frameTframe(tableFrame, worldFrame, state);
+
+    Matrix4f frameScannerTTable_e = frameScannerTTable.e();
+    Matrix4f frameTableTWorld_e = frameTableTWorld.e();
+
+    //std::cout << frameWorldTTable << std::endl;
+    //std::cout << frameTableTScanner << std::endl;
+    std::cout << frameScannerTBottle << std::endl;
+    
+    //std::cout << pose_esti.inverse() * frameScannerTTable_e * frameTableTWorld_e  << std::endl;
+
+    //std::cout << frameWorldTTable * frameTableTScanner * frameScannerTBottle << std::endl;
+
     
 
-    std::cout << frameScannerTBottle << std::endl;
-    std::cout << frameWorldTScanner << std::endl;
-    
-    rw::kinematics::Frame* parent = bottleFrame->getParent(state);
 
-    std::cout << parent->getName() << std::endl;
-    frameScannerTBottle = rw::kinematics::Kinematics::frameTframe(parent, bottleFrame, state);
-    std::cout << frameScannerTBottle << std::endl;
+
 
 
 
