@@ -113,7 +113,6 @@ void RRTp2p(rw::math::Q from, rw::math::Q to, rw::models::SerialDevice::Ptr robo
 		std::cout << "Planned path with " << rrt_points.size();
 		std::cout << " configurations" << std::endl;
 	}
-
 	// for (int i = 0; i < result.size(); i++)
 	// {
 	// 	std::cout << result[i] << std::endl;
@@ -131,103 +130,101 @@ void RRTp2p(rw::math::Q from, rw::math::Q to, rw::models::SerialDevice::Ptr robo
 
 int rrtPlanning()
 {
-	//load workcell
-	rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
-	printDeviceNames(*wc);
-
-	if(NULL==wc){
-		RW_THROW("COULD NOT LOAD scene... check path!");
-		return -1;
-	}
-
-	// find relevant frames
-	rw::kinematics::Frame* bottleFrame = wc->findFrame("Bottle");
-	if(NULL==bottleFrame){
-		RW_THROW("COULD not find movable frame Bottle ... check model");
-		return -1;
-	}	
 	
 
-	rw::models::SerialDevice::Ptr robotUR5 = wc->findDevice<rw::models::SerialDevice>("UR-6-85-5-A");
-	if(NULL==robotUR5){
-		RW_THROW("COULD not find device UR5 ... check model");
-		return -1;
-	}
-
-	rw::models::TreeDevice::Ptr Gripper = wc->findDevice<rw::models::TreeDevice>("WSG50");
-	if(NULL==Gripper){
-		RW_THROW("COULD not find device Gripper ... check model");
-		return -1;
-	}
-	
-	State state = wc->getDefaultState();
-	Gripper->setQ(rw::math::Q(0.055), state);
-
-	rw::math::Q start_q = robotUR5->getQ(state);
-	rw::math::Q interpolation_step1 = rw::math::Q(0.824267, -2.68465, -0.831859, -2.76666, 2.39506, -0);
-	rw::math::Q interpolation_step2 = rw::math::Q(0.39264, 0.46807, 0.21718, -1.55226, 0.159715, 1.80128);
-	rw::math::Q interpolation_step3 = rw::math::Q(0.39264, 0.46807, 0.21718, -1.55226, 0.159715, 1.80128);
-
-	std::vector<rw::math::Q> solutions = getQConfigs("Bottle", robotUR5, wc, state);
-
-	std::vector< std::string > strategies = rwlibs::proximitystrategies::ProximityStrategyFactory::getDistanceStrategyIDs();
-	for (size_t i = 0; i < strategies.size(); i++)
+	for (size_t i = 0; i < bottle_placements.size(); i++ )
 	{
-		std::cout << strategies[i] << std::endl;
-	}
-	//rw::proximity::CollisionDetector::Ptr detector = rw::common::ownedPtr(new rw::proximity::CollisionDetector(wc, rwlibs::proximitystrategies::ProximityStrategyFactory::makeDefaultCollisionStrategy()));
-	rw::proximity::CollisionDetector::Ptr detector = rw::common::ownedPtr(new rw::proximity::CollisionDetector(wc, rwlibs::proximitystrategies::ProximityStrategyFactory::makeCollisionStrategy ("PQP")));
-    
-    std::vector<rw::math::Q> collisionFreeSolutions;
+		//load workcell
+		rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
+		printDeviceNames(*wc);
 
-
-	for(unsigned int i=0; i<solutions.size() - 1; i++)
-	{
-		// set the robot in that configuration and check if it is in collision
-		robotUR5->setQ(solutions[i], state);
-		if( !detector->inCollision(state,NULL,true) )
+		if (NULL == wc)
 		{
-			collisionFreeSolutions.push_back(solutions[i]); // save it
-			 // we only need one
+			RW_THROW("COULD NOT LOAD scene... check path!");
+			return -1;
 		}
-	}
-	
-	std:: cout << "Current position of the robot vs object to be grasped has: "
-			   << collisionFreeSolutions.size()
-			   << " collision-free inverse kinematics solutions!" << std::endl;
 
+		// find relevant frames
+		rw::kinematics::Frame *bottleFrame = wc->findFrame("Bottle");
+		if (NULL == bottleFrame)
+		{
+			RW_THROW("COULD not find movable frame Bottle ... check model");
+			return -1;
+		}
 
-	if (!collisionFreeSolutions.empty())
-	{
-		rw::trajectory::LinearInterpolator<rw::math::Q> interpolated_pointsSt1(start_q, interpolation_step1, 2);
-		rw::trajectory::LinearInterpolator<rw::math::Q> interpolated_points1tE(interpolation_step1, collisionFreeSolutions[0], 1);
-		rw::trajectory::LinearInterpolator<rw::math::Q> interpolated_pointsEt1(collisionFreeSolutions[0], interpolation_step1, 1);
-		rw::trajectory::TimedStatePath tStatePath;
-		double time = 0;
+		rw::models::SerialDevice::Ptr robotUR5 = wc->findDevice<rw::models::SerialDevice>("UR-6-85-5-A");
+		if (NULL == robotUR5)
+		{
+			RW_THROW("COULD not find device UR5 ... check model");
+			return -1;
+		}
 
-		RRTp2p(start_q, collisionFreeSolutions[0], robotUR5, detector, tStatePath, time, state);
+		rw::models::TreeDevice::Ptr Gripper = wc->findDevice<rw::models::TreeDevice>("WSG50");
+		if (NULL == Gripper)
+		{
+			RW_THROW("COULD not find device Gripper ... check model");
+			return -1;
+		}
 
-		
+		State state = wc->getDefaultState();
 
-		// rw::kinematics::Frame* frameRobotTcp = wc->findFrame(robotUR5->getName() + ".TCP");
-		// if (bottleFrame == NULL || frameRobotTcp == NULL)
-		// {
-		// 	std::cout << "One of the frames not found!!!" << std::endl;
-		// }
-	    // if( Kinematics::isDAF( bottleFrame ) )
-		// {
-       	// 	// attach mframe to end of serial device
-       	// 	Kinematics::gripFrame(bottleFrame, robotUR5->getEnd(), state);
-    	// }
+		Gripper->setQ(rw::math::Q(0.055), state);
 
+		rw::math::Q start_q = robotUR5->getQ(state);
 
+		std::vector<rw::math::Q> solutions = getQConfigs("Bottle", robotUR5, wc, state);
 
+		std::vector<std::string> strategies = rwlibs::proximitystrategies::ProximityStrategyFactory::getDistanceStrategyIDs();
+		for (size_t i = 0; i < strategies.size(); i++)
+		{
+			std::cout << strategies[i] << std::endl;
+		}
+		//rw::proximity::CollisionDetector::Ptr detector = rw::common::ownedPtr(new rw::proximity::CollisionDetector(wc, rwlibs::proximitystrategies::ProximityStrategyFactory::makeDefaultCollisionStrategy()));
+		rw::proximity::CollisionDetector::Ptr detector = rw::common::ownedPtr(new rw::proximity::CollisionDetector(wc, rwlibs::proximitystrategies::ProximityStrategyFactory::makeCollisionStrategy("PQP")));
 
-		
-		rw::loaders::PathLoader::storeTimedStatePath(*wc, tStatePath, "../replays/visu.rwplay");
-		std::cout << "Saved a replay with size: " 
-				  << tStatePath.size() 
-				  << " in folder: /replays" << std::endl;
+		std::vector<rw::math::Q> collisionFreeSolutions;
+
+		for (unsigned int i = 0; i < solutions.size() - 1; i++)
+		{
+			// set the robot in that configuration and check if it is in collision
+			robotUR5->setQ(solutions[i], state);
+			if (!detector->inCollision(state, NULL, true))
+			{
+				collisionFreeSolutions.push_back(solutions[i]); // save it
+																// we only need one
+			}
+		}
+
+		std::cout << "Current position of the robot vs object to be grasped has: "
+				  << collisionFreeSolutions.size()
+				  << " collision-free inverse kinematics solutions!" << std::endl;
+
+		if (!collisionFreeSolutions.empty())
+		{
+			rw::trajectory::LinearInterpolator<rw::math::Q> interpolated_pointsSt1(start_q, interpolation_step1, 2);
+			rw::trajectory::LinearInterpolator<rw::math::Q> interpolated_points1tE(interpolation_step1, collisionFreeSolutions[0], 1);
+			rw::trajectory::LinearInterpolator<rw::math::Q> interpolated_pointsEt1(collisionFreeSolutions[0], interpolation_step1, 1);
+			rw::trajectory::TimedStatePath tStatePath;
+			double time = 0;
+
+			RRTp2p(start_q, collisionFreeSolutions[0], robotUR5, detector, tStatePath, time, state);
+
+			// rw::kinematics::Frame* frameRobotTcp = wc->findFrame(robotUR5->getName() + ".TCP");
+			// if (bottleFrame == NULL || frameRobotTcp == NULL)
+			// {
+			// 	std::cout << "One of the frames not found!!!" << std::endl;
+			// }
+			// if( Kinematics::isDAF( bottleFrame ) )
+			// {
+			// 	// attach mframe to end of serial device
+			// 	Kinematics::gripFrame(bottleFrame, robotUR5->getEnd(), state);
+			// }
+
+			rw::loaders::PathLoader::storeTimedStatePath(*wc, tStatePath, "../replays/visu.rwplay");
+			std::cout << "Saved a replay with size: "
+					  << tStatePath.size()
+					  << " in folder: /replays" << std::endl;
+		}
 	}
 
 	return 0;
