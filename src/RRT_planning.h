@@ -130,10 +130,32 @@ void RRTp2p(rw::math::Q from, rw::math::Q to, rw::models::SerialDevice::Ptr robo
 
 int rrtPlanning()
 {
-	
+	// Bottle poses
+    std::vector<Vector3D<> > vectors;
+    vectors.push_back(Vector3D<>(-0.30, 0.40, 0.21));
+    // vectors.push_back(Vector3D<>(-0.30, 0.50, 0.21));
+    // vectors.push_back(Vector3D<>(-0.10, 0.40, 0.21));
+    // vectors.push_back(Vector3D<>(-0.10, 0.50, 0.21));
+    vectors.push_back(Vector3D<>( 0.10, 0.40, 0.21));
+    // vectors.push_back(Vector3D<>( 0.10, 0.50, 0.21));
+    // vectors.push_back(Vector3D<>( 0.30, 0.40, 0.21));
+    vectors.push_back(Vector3D<>( 0.30, 0.50, 0.21));
+
+    RPY<> R1 = RPY<>(-1.571, 0, 1.571);
+
+    std::vector<rw::math::Transform3D<> > bottle_placements;
+    rw::math::Transform3D<> temp = Transform3D<>(vectors[0], R1.toRotation3D());
+
+    for (size_t i = 0; i < vectors.size(); i++)
+    {
+        temp = Transform3D<>(vectors[i], R1.toRotation3D());
+        bottle_placements.push_back(temp);
+    }
+
 
 	for (size_t i = 0; i < bottle_placements.size(); i++ )
 	{
+
 		//load workcell
 		rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
 		printDeviceNames(*wc);
@@ -145,7 +167,7 @@ int rrtPlanning()
 		}
 
 		// find relevant frames
-		rw::kinematics::Frame *bottleFrame = wc->findFrame("Bottle");
+		rw::kinematics::MovableFrame *bottleFrame = wc->findFrame("Bottle");
 		if (NULL == bottleFrame)
 		{
 			RW_THROW("COULD not find movable frame Bottle ... check model");
@@ -167,6 +189,7 @@ int rrtPlanning()
 		}
 
 		State state = wc->getDefaultState();
+		bottleFrame->moveTo(bottle_placements[0]);
 
 		Gripper->setQ(rw::math::Q(0.055), state);
 
@@ -220,7 +243,7 @@ int rrtPlanning()
 			// 	Kinematics::gripFrame(bottleFrame, robotUR5->getEnd(), state);
 			// }
 
-			rw::loaders::PathLoader::storeTimedStatePath(*wc, tStatePath, "../replays/visu.rwplay");
+			rw::loaders::PathLoader::storeTimedStatePath(*wc, tStatePath, "../replays/visu" + std::to_string(i) + ".rwplay");
 			std::cout << "Saved a replay with size: "
 					  << tStatePath.size()
 					  << " in folder: /replays" << std::endl;
