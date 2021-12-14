@@ -167,7 +167,7 @@ int rrtPlanning()
 		}
 
 		// find relevant frames
-		rw::kinematics::MovableFrame *bottleFrame = wc->findFrame("Bottle");
+    	rw::kinematics::MovableFrame::Ptr bottleFrame = wc->findFrame<rw::kinematics::MovableFrame>("Bottle");
 		if (NULL == bottleFrame)
 		{
 			RW_THROW("COULD not find movable frame Bottle ... check model");
@@ -189,7 +189,8 @@ int rrtPlanning()
 		}
 
 		State state = wc->getDefaultState();
-		bottleFrame->moveTo(bottle_placements[0]);
+		bottleFrame->setTransform(bottle_placements[i]);
+		bottleFrame->moveTo(bottle_placements[i]);
 
 		Gripper->setQ(rw::math::Q(0.055), state);
 
