@@ -118,7 +118,7 @@ int interpolatePara()
 	std::vector<double> placement1_total_length;
 	std::vector<double> placement2_total_length;
 	std::vector<double> placement3_total_length;
-	for (int k = 0; k < 50; k++)
+	for (int k = 0; k < 1; k++)
 	{
 		for (size_t i = 0; i < bottle_placements.size(); i++)
 		{
@@ -260,7 +260,7 @@ int interpolatePara()
 				std::cout << "Time for path:" << analysis_time.time1 << std::endl;
 				std::cout << "Time for total path: " << total_time << std::endl;
 
-				rw::loaders::PathLoader::storeTimedStatePath(*wc, tStatePath, "../replays/visu_linear" + std::to_string(i) + ".rwplay");
+				rw::loaders::PathLoader::storeTimedStatePath(*wc, tStatePath, "../replays/visu_para" + std::to_string(i) + ".rwplay");
 				std::cout << "Saved a replay with size: "
 						  << tStatePath.size()
 						  << " in folder: /replays" << std::endl;

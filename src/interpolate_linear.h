@@ -105,6 +105,15 @@ int interpolateLinear()
 	std::vector<double> placement1_total_length;
 	std::vector<double> placement2_total_length;
 	std::vector<double> placement3_total_length;
+	std::vector<double> placement1_x;
+	std::vector<double> placement1_dx;
+	std::vector<double> placement1_ddx;
+	std::vector<double> placement2_x;
+	std::vector<double> placement2_dx;
+	std::vector<double> placement2_ddx;
+	std::vector<double> placement3_x;
+	std::vector<double> placement3_dx;
+	std::vector<double> placement3_ddx;
 	for (int k = 0; k < 5; k++)
 	{
 		for (size_t i = 0; i < bottle_placements.size(); i++)
@@ -139,6 +148,10 @@ int interpolateLinear()
 				return -1;
 			}
 			rw::kinematics::Frame *frameTcp = wc->findFrame("GraspTCP");
+
+			std::vector<double> x;
+			std::vector<double> dx;
+			std::vector<double> ddx;
 
 			State state = wc->getDefaultState();
 

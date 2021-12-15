@@ -98,7 +98,7 @@ void RRTp2p(rw::math::Q from, rw::math::Q to, double &total_length, double &tota
 	rw::core::Ptr<QSampler> sampler = rw::pathplanning::QSampler::makeUniform(robot);
 	VMetricPtr metric = MetricFactory::makeEuclidean<V>();
 	//const QToQPlanner::Ptr planner = RRTPlanner::makeQToQPlanner (con, sampler, metric, 2, rwlibs::pathplanners::RRTPlanner::PlannerType::RRTConnect);
-	const QToQPlanner::Ptr planner = RRTPlanner::makeQToQPlanner(con, robot, rwlibs::pathplanners::RRTPlanner::PlannerType::RRTBalancedBidirectional);
+	const QToQPlanner::Ptr planner = RRTPlanner::makeQToQPlanner(con, robot, rwlibs::pathplanners::RRTPlanner::PlannerType::RRTConnect);
 
 	ProximityData pdata;
 	robot->setQ(from, state);
@@ -182,7 +182,7 @@ int rrtPlanning()
 	std::vector<double> placement1_total_length;
 	std::vector<double> placement2_total_length;
 	std::vector<double> placement3_total_length;
-	for (int k = 0; k < 30; k++)
+	for (int k = 0; k < 1; k++)
 	{
 		std::cout << "This is K-iteration " << k << std::endl;
 		for (size_t i = 0; i < bottle_placements.size(); i++)
