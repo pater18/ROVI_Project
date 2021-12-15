@@ -234,7 +234,7 @@ void poseEstimatePCL(const std::string object_name, const std::string scene_name
     //final_inverse = final_inverse.inverse();
     Matrix4f final_pose = pose2 * transformation;
     std::cout << "Final pose inverse :" << std::endl << final_pose << std::endl;
-    //std::cout << "Final pose inverse :" << std::endl << final_inverse << std::endl;
+    // std::cout << "Final pose inverse :" << std::endl << final_inverse << std::endl;
     Matrix3f rotation = Matrix3f::Identity();
     rotation(0,0) = final_pose(0,0);
     rotation(0,1) = final_pose(0,1);
