@@ -42,7 +42,7 @@ void spatialFilter2( pcl::PointCloud<PointNT>::Ptr input_cloud, pcl::PointCloud<
 }
 
 
-void poseEstimatePCL(const std::string object_name, const std::string scene_name)
+std::vector<Matrix4f> poseEstimatePCL(const std::string object_name, const std::string scene_name)
 {
     // Point clouds
     // Load
@@ -56,7 +56,7 @@ void poseEstimatePCL(const std::string object_name, const std::string scene_name
   PointCloudT::Ptr scene (new PointCloudT);
   FeatureCloudT::Ptr object_features (new FeatureCloudT);
   FeatureCloudT::Ptr scene_features (new FeatureCloudT);
-  
+  std::vector<Matrix4f> global_local;
   // Get input object and scene
   
   // Load object and scene
@@ -249,8 +249,9 @@ void poseEstimatePCL(const std::string object_name, const std::string scene_name
     std::cout << "Euler angels: " << std::endl << ea << std::endl;
 
 
-
+    global_local.push_back(transformation);
+    global_local.push_back(pose2);
 
   
-  //return (0);
+  return global_local;
 }

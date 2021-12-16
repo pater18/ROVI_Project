@@ -12,7 +12,7 @@ using namespace Eigen;
 USE_ROBWORK_NAMESPACE
 using namespace robwork;
 
-int calcErrorOnPose(rw::math::Transform3D<> pose, Matrix4f pose_esti)
+int calcErrorOnPose(rw::math::Transform3D<> pose, std::vector<Matrix4f> pose_esti)
 {
     rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
     if(NULL==wc)
@@ -51,24 +51,34 @@ int calcErrorOnPose(rw::math::Transform3D<> pose, Matrix4f pose_esti)
 
     
 
+    
 
 
     State state = wc->getDefaultState();
 
     bottleFrame->moveTo(pose, state);
 
-    rw::math::Transform3D<> frameWorldTTable = rw::kinematics::Kinematics::frameTframe(worldFrame, tableFrame, state);
-    rw::math::Transform3D<> frameTableTScanner = rw::kinematics::Kinematics::frameTframe(tableFrame, scannerFrame, state);
+
     rw::math::Transform3D<> frameScannerTBottle = rw::kinematics::Kinematics::frameTframe(scannerFrame, bottleFrame, state);
     rw::math::Transform3D<> frameScannerTTable = rw::kinematics::Kinematics::frameTframe(scannerFrame, tableFrame, state);
     rw::math::Transform3D<> frameTableTWorld = rw::kinematics::Kinematics::frameTframe(tableFrame, worldFrame, state);
 
-    // Matrix4f frameScannerTTable_e = frameScannerTTable.e();
-    // Matrix4f frameTableTWorld_e = frameTableTWorld.e();
+    rw::math::Transform3D<> frameWorldTTable = rw::kinematics::Kinematics::frameTframe(worldFrame, tableFrame, state);
+    rw::math::Transform3D<> frameTableTScanner = rw::kinematics::Kinematics::frameTframe(tableFrame, scannerFrame, state);
+    Eigen::Matrix4f frameWorldTTable_e = frameWorldTTable.e().cast<float> ();
+    Eigen::Matrix4f frameTableTScanner_e = frameScannerTTable.e().cast<float> ();
+    
+    //Eigen::Matrix4d pose_esti_double = pose_esti.cast<double> ();  
+
+    Matrix4f final_pose = frameWorldTTable_e * frameTableTScanner_e * pose_esti[1] * pose_esti[0];
+    Matrix4f final_pose2 = frameWorldTTable_e * frameTableTScanner_e * pose_esti[0] * pose_esti[1];
+    
+    std::cout << final_pose << std::endl;
+    std::cout << final_pose2 << std::endl;
 
     //std::cout << frameWorldTTable << std::endl;
     //std::cout << frameTableTScanner << std::endl;
-    std::cout << frameScannerTBottle << std::endl;
+    std::cout << frameWorldTTable * frameTableTScanner * frameScannerTBottle<< std::endl;
     
     //std::cout << pose_esti.inverse() * frameScannerTTable_e * frameTableTWorld_e  << std::endl;
 
