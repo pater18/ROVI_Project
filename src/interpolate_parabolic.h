@@ -67,24 +67,31 @@ std::vector<rw::math::Q> getQConfigs(rw::kinematics::MovableFrame::Ptr frameGoal
 	return closedFormSovler->solve(targetAt, state);
 }
 
-void interpolateBetweenPoints(rw::trajectory::LinearInterpolator<rw::math::Q> interpolated_points, QPath &qpath_interpolated, rw::models::SerialDevice::Ptr robot, rw::trajectory::TimedStatePath &tStatePath, double &current_time, rw::kinematics::State state)
+void interpolateBetweenPoints(rw::trajectory::LinearInterpolator<rw::math::Q> interpolated_points, QPath &qpath_interpolated, std::vector<rw::math::Q> &x, std::vector<rw::math::Q> &dx, std::vector<rw::math::Q> &ddx, rw::models::SerialDevice::Ptr robot, rw::trajectory::TimedStatePath &tStatePath, double &current_time, rw::kinematics::State state)
 {
 
 	for (float i = 0.0; i < interpolated_points.duration(); i += 0.01)
 	{
 		robot->setQ(interpolated_points.x(i), state);
 		qpath_interpolated.push_back(interpolated_points.x(i));
+        x.push_back(interpolated_points.x(i));
+        dx.push_back(interpolated_points.dx(i));
+        ddx.push_back(interpolated_points.ddx(i));
 		tStatePath.push_back(rw::trajectory::TimedState(current_time, state));
 		current_time += 0.01;
 	}
 }
-void interpolateBetweenPointsPara(rw::trajectory::ParabolicBlend<rw::math::Q> interpolated_points, QPath &qpath_interpolated, rw::models::SerialDevice::Ptr robot, rw::trajectory::TimedStatePath &tStatePath, double &current_time, rw::kinematics::State state)
+void interpolateBetweenPointsPara(rw::trajectory::ParabolicBlend<rw::math::Q> interpolated_points, QPath &qpath_interpolated, std::vector<rw::math::Q> &x, std::vector<rw::math::Q> &dx, std::vector<rw::math::Q> &ddx, rw::models::SerialDevice::Ptr robot, rw::trajectory::TimedStatePath &tStatePath, double &current_time, rw::kinematics::State state)
 {
 
 	for (float i = 0.0; i < interpolated_points.duration(); i += 0.01)
 	{
 		robot->setQ(interpolated_points.x(i), state);
 		qpath_interpolated.push_back(interpolated_points.x(i));
+        x.push_back(interpolated_points.x(i));
+        dx.push_back(interpolated_points.dx(i));
+        ddx.push_back(interpolated_points.ddx(i));
+
 		tStatePath.push_back(rw::trajectory::TimedState(current_time, state));
 		current_time += 0.01;
 	}
@@ -118,6 +125,9 @@ int interpolatePara()
 	std::vector<double> placement1_total_length;
 	std::vector<double> placement2_total_length;
 	std::vector<double> placement3_total_length;
+    std::vector<rw::math::Q> x;
+    std::vector<rw::math::Q> dx;
+    std::vector<rw::math::Q> ddx;
 	for (int k = 0; k < 1; k++)
 	{
 		for (size_t i = 0; i < bottle_placements.size(); i++)
@@ -220,6 +230,9 @@ int interpolatePara()
 				rw::trajectory::LinearInterpolator<rw::math::Q> interpolated_points4t5(interpolation_step4, interpolation_step5, 1);
 				rw::trajectory::LinearInterpolator<rw::math::Q> interpolated_points5tEnd(interpolation_step5, collisionFreeSolutionsEnd[0], 1);
 
+                rw::trajectory::LinearInterpolator<rw::math::Q> interpolated_pointsSt1_transform(start_q, interpolation_step1, 1);
+
+
                 rw::trajectory::ParabolicBlend<rw::math::Q> para1(interpolated_pointsSt1, interpolated_points1t2, 1);
                 rw::trajectory::ParabolicBlend<rw::math::Q> para2(interpolated_pointsBottlet4, interpolated_points4t5, 1);
                 rw::trajectory::ParabolicBlend<rw::math::Q> para3(interpolated_points4t5, interpolated_points5tEnd, 1);
@@ -227,10 +240,10 @@ int interpolatePara()
 				rw::trajectory::TimedStatePath tStatePath;
 				double time = 0;
 
-				interpolateBetweenPointsPara(para1, qpath_interpolated, robotUR5, tStatePath, time, state);
-				//interpolateBetweenPoints(interpolated_pointsSt1, qpath_interpolated, robotUR5, tStatePath, time, state);
-				//interpolateBetweenPoints(interpolated_points1t2, qpath_interpolated, robotUR5, tStatePath, time, state);
-				interpolateBetweenPoints(interpolated_points2tBottle, qpath_interpolated, robotUR5, tStatePath, time, state);
+				interpolateBetweenPointsPara(para1, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
+				//interpolateBetweenPoints(interpolated_pointsSt1, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
+				//interpolateBetweenPoints(interpolated_points1t2, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
+				interpolateBetweenPoints(interpolated_points2tBottle, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
 
 				rw::kinematics::Frame *frameRobotTcp = wc->findFrame(robotUR5->getName() + ".TCP");
 				if (bottleFrame == NULL || frameRobotTcp == NULL)
@@ -243,12 +256,12 @@ int interpolatePara()
 					Kinematics::gripFrame(bottleFrame, robotUR5->getEnd(), state);
 				}
 
-				interpolateBetweenPointsPara(para2, qpath_interpolated, robotUR5, tStatePath, time, state);
-				//interpolateBetweenPointsPara(para3, qpath_interpolated, robotUR5, tStatePath, time, state);
+				interpolateBetweenPointsPara(para2, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
+				//interpolateBetweenPointsPara(para3, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
 
-				// interpolateBetweenPoints(interpolated_pointsBottlet4, qpath_interpolated, robotUR5, tStatePath, time, state);
-				// interpolateBetweenPoints(interpolated_points4t5, qpath_interpolated, robotUR5, tStatePath, time, state);
-				interpolateBetweenPoints(interpolated_points5tEnd, qpath_interpolated, robotUR5, tStatePath, time, state);
+				//interpolateBetweenPoints(interpolated_pointsBottlet4, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
+				//interpolateBetweenPoints(interpolated_points4t5, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
+				interpolateBetweenPoints(interpolated_points5tEnd, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
 
 				rw::pathplanning::PathAnalyzer analyzer(robotUR5, state);
 				rw::pathplanning::PathAnalyzer::CartesianAnalysis analysis = analyzer.analyzeCartesian(qpath_interpolated, frameTcp);
@@ -293,6 +306,11 @@ int interpolatePara()
 	saveDataToCSV(placement1_total_length, "../csv_data/P1_para_length.csv");
 	saveDataToCSV(placement2_total_length, "../csv_data/P2_para_length.csv");
 	saveDataToCSV(placement3_total_length, "../csv_data/P3_para_length.csv");
-
+    saveVelAcc(x, "../csv_data/P1_para_pos.csv");
+    saveVelAcc(dx, "../csv_data/P1_para_vel.csv");
+    saveVelAcc(ddx, "../csv_data/P1_para_acc.csv");
+    // saveVelAcc(x, "../csv_data/P1_lin_pos.csv");
+    // saveVelAcc(dx, "../csv_data/P1_lin_vel.csv");
+    // saveVelAcc(ddx, "../csv_data/P1_lin_acc.csv");
 	return 0;
 }
