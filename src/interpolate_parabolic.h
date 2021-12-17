@@ -125,9 +125,10 @@ int interpolatePara()
 	std::vector<double> placement1_total_length;
 	std::vector<double> placement2_total_length;
 	std::vector<double> placement3_total_length;
-    std::vector<rw::math::Q> x;
+	std::vector<rw::math::Q> x;
     std::vector<rw::math::Q> dx;
     std::vector<rw::math::Q> ddx;
+
 	for (int k = 0; k < 1; k++)
 	{
 		for (size_t i = 0; i < bottle_placements.size(); i++)
@@ -185,7 +186,9 @@ int interpolatePara()
 
 			rw::math::Q start_q = robotUR5->getQ(state);
 			rw::math::Q interpolation_step1 = rw::math::Q(1.5708, -1.91986, -0.349066, -1.5708, 0, 0);
-			rw::math::Q interpolation_step2 = rw::math::Q(1.8, -2.03, -1.998, -2.36, 0.09, -3.139);
+			// rw::math::Q interpolation_step2 = rw::math::Q(1.8, -2.03, -1.998, -2.36, 0.09, -3.139);
+			rw::math::Q interpolation_step2 = rw::math::Q(2.48018, -2.3401, -1.34129, -2.60169, 0.910573, -3.13508);
+			
 			rw::math::Q interpolation_step4 = rw::math::Q(1.5708, -1.91986, -0.349066, -1.5708, 0, 0);
 			rw::math::Q interpolation_step5 = start_q;
 			std::vector<rw::math::Q> solutions = getQConfigs(bottleFrame, robotUR5, wc, state);
@@ -240,9 +243,9 @@ int interpolatePara()
 				rw::trajectory::TimedStatePath tStatePath;
 				double time = 0;
 
-				interpolateBetweenPointsPara(para1, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
-				//interpolateBetweenPoints(interpolated_pointsSt1, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
-				//interpolateBetweenPoints(interpolated_points1t2, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
+				//interpolateBetweenPointsPara(para1, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
+				interpolateBetweenPoints(interpolated_pointsSt1, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
+				interpolateBetweenPoints(interpolated_points1t2, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
 				interpolateBetweenPoints(interpolated_points2tBottle, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
 
 				rw::kinematics::Frame *frameRobotTcp = wc->findFrame(robotUR5->getName() + ".TCP");
@@ -256,11 +259,11 @@ int interpolatePara()
 					Kinematics::gripFrame(bottleFrame, robotUR5->getEnd(), state);
 				}
 
-				interpolateBetweenPointsPara(para2, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
+				//interpolateBetweenPointsPara(para2, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
 				//interpolateBetweenPointsPara(para3, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
 
-				//interpolateBetweenPoints(interpolated_pointsBottlet4, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
-				//interpolateBetweenPoints(interpolated_points4t5, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
+				interpolateBetweenPoints(interpolated_pointsBottlet4, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
+				interpolateBetweenPoints(interpolated_points4t5, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
 				interpolateBetweenPoints(interpolated_points5tEnd, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
 
 				rw::pathplanning::PathAnalyzer analyzer(robotUR5, state);
@@ -306,9 +309,9 @@ int interpolatePara()
 	saveDataToCSV(placement1_total_length, "../csv_data/P1_para_length.csv");
 	saveDataToCSV(placement2_total_length, "../csv_data/P2_para_length.csv");
 	saveDataToCSV(placement3_total_length, "../csv_data/P3_para_length.csv");
-    saveVelAcc(x, "../csv_data/P1_para_pos.csv");
-    saveVelAcc(dx, "../csv_data/P1_para_vel.csv");
-    saveVelAcc(ddx, "../csv_data/P1_para_acc.csv");
+    saveVelAcc(x, "../csv_data/P1_lin_pos.csv");
+    saveVelAcc(dx, "../csv_data/P1_lin_vel.csv");
+    saveVelAcc(ddx, "../csv_data/P1_lin_acc.csv");
     // saveVelAcc(x, "../csv_data/P1_lin_pos.csv");
     // saveVelAcc(dx, "../csv_data/P1_lin_vel.csv");
     // saveVelAcc(ddx, "../csv_data/P1_lin_acc.csv");
