@@ -22,7 +22,8 @@
 #include "poseEstimate2.h"
 #include <pcl/point_types.h>
 #include "errorOfPose.h"
-
+#include <random>
+#include <functional>
 
 
 
@@ -43,19 +44,34 @@ using namespace pcl::search;
 using namespace pcl::visualization;
 using namespace Eigen;
 
+double uniform0to1Random()
+{
+    double r = random();
+    return r / ((double)RAND_MAX + 1);
+}
+
+double myRandom()
+{
+  return 0.6 * uniform0to1Random() - 0.3;
+}
+
 int main(int argc, char** argv)
 {
 	// Bottle poses
     std::vector<Vector3D<> > vectors;
-    vectors.push_back(Vector3D<>(-0.30, 0.40, 0.21));
-    vectors.push_back(Vector3D<>(-0.30, 0.50, 0.21));
-    vectors.push_back(Vector3D<>(-0.10, 0.40, 0.21));
-    vectors.push_back(Vector3D<>(-0.10, 0.50, 0.21));
-    vectors.push_back(Vector3D<>( 0.10, 0.40, 0.21));
-    vectors.push_back(Vector3D<>( 0.10, 0.50, 0.21));
-    vectors.push_back(Vector3D<>( 0.30, 0.40, 0.21));
-    vectors.push_back(Vector3D<>( 0.30, 0.50, 0.21));
     
+    std::mt19937 generator(5);
+    std::uniform_real_distribution<float> uniform_distributionX(-0.3, 0.3);
+    std::uniform_real_distribution<float> uniform_distributionY(0.4, 0.5);
+    
+    int num_scenes = 50;
+
+    for (int i = 0; i < num_scenes; i++)
+    {
+        vectors.push_back(Vector3D<>( uniform_distributionX(generator), uniform_distributionY(generator), 0.21));
+        std::cout << vectors[i] << std::endl;
+    }
+
     RPY<> R1 = RPY<>(-1.571, 0, 1.571);
 
     std::vector<rw::math::Transform3D<> > bottle_transformations;
@@ -66,19 +82,23 @@ int main(int argc, char** argv)
         temp = Transform3D<>(vectors[i], R1.toRotation3D());
         bottle_transformations.push_back(temp);
     }
+	std::vector<rw::math::Transform3D<> > poses_actual = makePointCloudFromScene(bottle_transformations);
 
-	//std::vector<rw::math::Transform3D<> > poses_actual = getPoseWithDenseStereo();
-	//std::vector<Matrix4f> pose = poseEstimatePCL("bottle.ply", "scene_clouds/cloud_scene0.pcd");
-	//poseEstimatePCL("bottle2.ply", "scene_clouds/cloud_scene3.pcd");
 
-    //Matrix4f pose;    
-    for (size_t i = 0; i < bottle_transformations.size(); i++)
-    {
-        std::vector<Matrix4f> pose = poseEstimatePCL("bottle2.ply", "scene_clouds/cloud_scene" + std::to_string(i) + ".pcd");
+    for (float std = 0.0; std < 0.01; std += 0.0005)
 
-        calcErrorOnPose(bottle_transformations[i], pose);
 
-    }
+	// //std::vector<Matrix4f> pose = poseEstimatePCL("bottle.ply", "scene_clouds/cloud_scene0.pcd");
+	// //poseEstimatePCL("bottle2.ply", "scene_clouds/cloud_scene3.pcd");
+
+    // //Matrix4f pose;    
+    // for (size_t i = 0; i < bottle_transformations.size(); i++)
+    // {
+    //     std::vector<Matrix4f> pose = poseEstimatePCL("bottle2.ply", "scene_clouds/cloud_scene" + std::to_string(i) + ".pcd");
+
+    //     calcErrorOnPose(bottle_transformations[i], pose);
+
+    // }
 	
 
 	return 0;

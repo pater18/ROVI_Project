@@ -35,7 +35,7 @@ using namespace rwlibs::simulation;
 using namespace rws;
 using namespace rw::math;
 
-std::vector<rw::math::Transform3D<>> getPoseWithDenseStereo()
+std::vector<rw::math::Transform3D<>> makePointCloudFromScene(std::vector<rw::math::Transform3D<> > bottle_transformations)
 {
 
     rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
@@ -70,27 +70,27 @@ std::vector<rw::math::Transform3D<>> getPoseWithDenseStereo()
         RW_THROW("COULD not find movable frame bottle ... check model");
     }
 
-    // Bottle poses
-    std::vector<Vector3D<>> vectors;
-    vectors.push_back(Vector3D<>(-0.30, 0.40, 0.21));
-    vectors.push_back(Vector3D<>(-0.30, 0.50, 0.21));
-    vectors.push_back(Vector3D<>(-0.10, 0.40, 0.21));
-    vectors.push_back(Vector3D<>(-0.10, 0.50, 0.21));
-    vectors.push_back(Vector3D<>(0.10, 0.40, 0.21));
-    vectors.push_back(Vector3D<>(0.10, 0.50, 0.21));
-    vectors.push_back(Vector3D<>(0.30, 0.40, 0.21));
-    vectors.push_back(Vector3D<>(0.30, 0.50, 0.21));
+    // // Bottle poses
+    // std::vector<Vector3D<>> vectors;
+    // vectors.push_back(Vector3D<>(-0.30, 0.40, 0.21));
+    // vectors.push_back(Vector3D<>(-0.30, 0.50, 0.21));
+    // vectors.push_back(Vector3D<>(-0.10, 0.40, 0.21));
+    // vectors.push_back(Vector3D<>(-0.10, 0.50, 0.21));
+    // vectors.push_back(Vector3D<>(0.10, 0.40, 0.21));
+    // vectors.push_back(Vector3D<>(0.10, 0.50, 0.21));
+    // vectors.push_back(Vector3D<>(0.30, 0.40, 0.21));
+    // vectors.push_back(Vector3D<>(0.30, 0.50, 0.21));
 
-    RPY<> R1 = RPY<>(-1.571, 0, 1.571);
+    // RPY<> R1 = RPY<>(-1.571, 0, 1.571);
 
-    std::vector<rw::math::Transform3D<>> bottle_transformations;
-    rw::math::Transform3D<> temp = Transform3D<>(vectors[0], R1.toRotation3D());
+    // std::vector<rw::math::Transform3D<>> bottle_transformations;
+    // rw::math::Transform3D<> temp = Transform3D<>(vectors[0], R1.toRotation3D());
 
-    for (size_t i = 0; i < vectors.size(); i++)
-    {
-        temp = Transform3D<>(vectors[i], R1.toRotation3D());
-        bottle_transformations.push_back(temp);
-    }
+    // for (size_t i = 0; i < vectors.size(); i++)
+    // {
+    //     temp = Transform3D<>(vectors[i], R1.toRotation3D());
+    //     bottle_transformations.push_back(temp);
+    // }
 
     State state = wc->getDefaultState();
 
@@ -125,7 +125,6 @@ std::vector<rw::math::Transform3D<>> getPoseWithDenseStereo()
 
             bottleFrame->setTransform(bottle_transformations[i], state_studio);
             std::cout << bottleFrame->getTransform(state_studio) << std::endl;
-            TimerUtil::sleepMs(1000);
 
             rwstudio->setState(state_studio);
             simscanner25d->acquire();
