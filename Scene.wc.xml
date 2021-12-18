@@ -37,6 +37,13 @@
          <Polytope file="parts/bottle" />
      </Drawable>
 </Frame>
+	
+	<!-- <Frame name="Bottle2" refframe="Table"  type="Movable" daf="true" >
+     <RPY> -90 0 90 </RPY> <Pos> 0 0.474 0.21 </Pos>
+     <Drawable name="Bottle2" refframe="Bottle2">
+         <Polytope file="parts/bottle" />
+     </Drawable>
+</Frame> -->
 
 
 <!-- Cameras -->

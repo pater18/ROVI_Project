@@ -85,6 +85,8 @@ std::vector<Matrix4f> poseEstimatePCL(const std::string object_name, const std::
   grid.filter (*object);
   grid.setInputCloud (scene);
   grid.filter (*scene);
+
+  pcl::io::savePLYFileASCII("bottle2_1.ply", *object);
   
   // Estimate normals for scene
   pcl::console::print_highlight ("Estimating scene normals...\n");
@@ -148,10 +150,10 @@ std::vector<Matrix4f> poseEstimatePCL(const std::string object_name, const std::
     pcl::console::print_info ("Inliers: %i/%i\n", align.getInliers ().size (), object->size ());
     
     // Show alignment
-    pcl::visualization::PCLVisualizer visu("Alignment");
-    visu.addPointCloud (scene, ColorHandlerT (scene, 0.0, 255.0, 0.0), "scene");
-    visu.addPointCloud (object_aligned, ColorHandlerT (object_aligned, 0.0, 0.0, 255.0), "object_aligned");
-    visu.spin ();
+    // pcl::visualization::PCLVisualizer visu("Alignment");
+    // visu.addPointCloud (scene, ColorHandlerT (scene, 0.0, 255.0, 0.0), "scene");
+    // visu.addPointCloud (object_aligned, ColorHandlerT (object_aligned, 0.0, 0.0, 255.0), "object_aligned");
+    // visu.spin ();
   }
   else
   {
@@ -167,7 +169,7 @@ std::vector<Matrix4f> poseEstimatePCL(const std::string object_name, const std::
     tree2.setInputCloud(scene);
     
     // Set ICP parameters
-    const size_t iter2 = 100;
+    const size_t iter2 = 20;
     const float thressq2 = 0.01 * 0.01;
     
     // Start ICP
@@ -223,18 +225,21 @@ std::vector<Matrix4f> poseEstimatePCL(const std::string object_name, const std::
 
 
     // Show result
-    {
-        PCLVisualizer v("After local alignment");
-        v.addPointCloud<PointNormal>(object_aligned, PointCloudColorHandlerCustom<PointNormal>(object_aligned, 0, 255, 0), "object_aligned");
-        v.addPointCloud<PointNormal>(scene, PointCloudColorHandlerCustom<PointNormal>(scene, 255, 0, 0),"scene");
-        v.spin();
-    }
+    // {
+    //     PCLVisualizer v("After local alignment");
+    //     v.addPointCloud<PointNormal>(object_aligned, PointCloudColorHandlerCustom<PointNormal>(object_aligned, 0, 255, 0), "object_aligned");
+    //     v.addPointCloud<PointNormal>(scene, PointCloudColorHandlerCustom<PointNormal>(scene, 255, 0, 0),"scene");
+    //     v.spin();
+    // }
 
     //Matrix4f final_inverse = pose * pose2;
     //final_inverse = final_inverse.inverse();
-    Matrix4f final_pose = pose2 * transformation;
-    std::cout << "Final pose inverse :" << std::endl << final_pose << std::endl;
-    // std::cout << "Final pose inverse :" << std::endl << final_inverse << std::endl;
+    Matrix4f local_global = pose2 * transformation;
+    Matrix4f global1_local = transformation * pose2;
+    std::cout << "Local * Global :" << std::endl << local_global << std::endl;
+    std::cout << "Global * Local :" << std::endl << global1_local << std::endl;
+    
+    Matrix4f final_pose = local_global;
     Matrix3f rotation = Matrix3f::Identity();
     rotation(0,0) = final_pose(0,0);
     rotation(0,1) = final_pose(0,1);

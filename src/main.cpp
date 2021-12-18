@@ -55,7 +55,7 @@ int main(int argc, char** argv)
     vectors.push_back(Vector3D<>( 0.10, 0.50, 0.21));
     vectors.push_back(Vector3D<>( 0.30, 0.40, 0.21));
     vectors.push_back(Vector3D<>( 0.30, 0.50, 0.21));
-
+    
     RPY<> R1 = RPY<>(-1.571, 0, 1.571);
 
     std::vector<rw::math::Transform3D<> > bottle_transformations;
@@ -68,15 +68,17 @@ int main(int argc, char** argv)
     }
 
 	//std::vector<rw::math::Transform3D<> > poses_actual = getPoseWithDenseStereo();
-	std::vector<Matrix4f> pose = poseEstimatePCL("bottle.ply", "scene_clouds/cloud_scene3.pcd");
+	//std::vector<Matrix4f> pose = poseEstimatePCL("bottle.ply", "scene_clouds/cloud_scene0.pcd");
 	//poseEstimatePCL("bottle2.ply", "scene_clouds/cloud_scene3.pcd");
 
-    // Matrix4f pose;    
-    // for (size_t i = 0; i < bottle_transformations.size(); i++)
-    // {
-        calcErrorOnPose(bottle_transformations[3], pose);
+    //Matrix4f pose;    
+    for (size_t i = 0; i < bottle_transformations.size(); i++)
+    {
+        std::vector<Matrix4f> pose = poseEstimatePCL("bottle2.ply", "scene_clouds/cloud_scene" + std::to_string(i) + ".pcd");
 
-    // }
+        calcErrorOnPose(bottle_transformations[i], pose);
+
+    }
 	
 
 	return 0;

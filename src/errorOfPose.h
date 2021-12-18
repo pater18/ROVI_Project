@@ -6,6 +6,7 @@
 #include <rw/kinematics.hpp>
 #include <rw/loaders/image/ImageLoader.hpp>
 #include <rw/loaders/path/PathLoader.hpp>
+#include <math.h>
 
 using namespace Eigen;
 
@@ -56,7 +57,7 @@ int calcErrorOnPose(rw::math::Transform3D<> pose, std::vector<Matrix4f> pose_est
 
     State state = wc->getDefaultState();
 
-    bottleFrame->moveTo(pose, state);
+    bottleFrame->setTransform(pose, state);
 
 
     rw::math::Transform3D<> frameScannerTBottle = rw::kinematics::Kinematics::frameTframe(scannerFrame, bottleFrame, state);
@@ -67,21 +68,37 @@ int calcErrorOnPose(rw::math::Transform3D<> pose, std::vector<Matrix4f> pose_est
     rw::math::Transform3D<> frameTableTScanner = rw::kinematics::Kinematics::frameTframe(tableFrame, scannerFrame, state);
     Eigen::Matrix4f frameWorldTTable_e = frameWorldTTable.e().cast<float> ();
     Eigen::Matrix4f frameTableTScanner_e = frameScannerTTable.e().cast<float> ();
+    Eigen::Matrix4f frameScannerTBottle_e = frameScannerTBottle.e().cast<float> ();
     
     //Eigen::Matrix4d pose_esti_double = pose_esti.cast<double> ();  
 
-    Matrix4f final_pose = frameWorldTTable_e * frameTableTScanner_e * pose_esti[1] * pose_esti[0];
-    Matrix4f final_pose2 = frameWorldTTable_e * frameTableTScanner_e * pose_esti[0] * pose_esti[1];
-    
-    std::cout << final_pose << std::endl;
-    std::cout << final_pose2 << std::endl;
+    Matrix4f final_pose = pose_esti[1] * pose_esti[0];
+
+    double error_pos = pow(final_pose(0, 3) - frameScannerTBottle_e(0,3), 2) + pow(final_pose(1, 3) - frameScannerTBottle_e(1,3), 2) + pow(final_pose(2, 3) - frameScannerTBottle_e(2,3), 2);
+    error_pos = sqrt(error_pos);
+    std::cout << "Error in euclidian distance: " << error_pos << std::endl;
+    //std::cout << final_pose << std::endl;
+    //std::cout << final_pose2 << std::endl;
 
     //std::cout << frameWorldTTable << std::endl;
     //std::cout << frameTableTScanner << std::endl;
-    std::cout << frameWorldTTable * frameTableTScanner * frameScannerTBottle<< std::endl;
-    
-    //std::cout << pose_esti.inverse() * frameScannerTTable_e * frameTableTWorld_e  << std::endl;
+    //std::cout << frameWorldTTable * frameTableTScanner * frameScannerTBottle<< std::endl;
 
+    Matrix4f error_transform = frameScannerTBottle_e.inverse() * final_pose;
+    
+    Vector4f error_transform_angle_temp = error_transform.col(2);
+    Vector3f error_transform_angle(1, 2, 3);
+    error_transform_angle(0) = error_transform_angle_temp(0);
+    error_transform_angle(1) = error_transform_angle_temp(1);
+    error_transform_angle(2) = error_transform_angle_temp(2);
+
+
+    std::cout << frameScannerTBottle  << std::endl;
+    std::cout << error_transform  << std::endl;
+    Vector3f unit_vector(0, 1, 0);
+    float error_angle = unit_vector.dot(error_transform_angle) / (error_transform_angle.norm() * unit_vector.norm());
+    error_angle = acos(error_angle);
+    std::cout << "Error in angle: " << error_angle << std::endl;
     //std::cout << frameWorldTTable * frameTableTScanner * frameScannerTBottle << std::endl;
 
     
