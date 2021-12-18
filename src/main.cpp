@@ -40,8 +40,8 @@ using namespace Eigen;
 
 int main(int argc, char** argv)
 {
-	
-	addNoice("bottle.ply", "scene_clouds/cloud_scene3.pcd");
+	for (float i = 0.0; i < 0.01; i += 0.001)
+	addNoice("bottle.ply", "scene_clouds/cloud_scene0.pcd", i);
 
 	return 0;
 }

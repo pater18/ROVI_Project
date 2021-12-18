@@ -55,22 +55,13 @@ void spatialFilter( pcl::PointCloud<PointT>::Ptr input_cloud, pcl::PointCloud<Po
 
 }
 
-void addNoice(const std::string object_name, const std::string scene_name )
+void addNoice(const std::string object_name, const std::string scene_name, float std)
 {
 
     // Load
-    pcl::PointCloud<PointT>::Ptr object(new pcl::PointCloud<PointT>);
     pcl::PointCloud<PointT>::Ptr scene(new pcl::PointCloud<PointT>);
-    pcl::io::loadPLYFile<PointT> (object_name, *object);
     pcl::io::loadPCDFile<PointT> (scene_name, *scene);
 
-    {
-        PCLVisualizer v("Before global alignment");
-        v.addPointCloud<PointT>(object, PointCloudColorHandlerCustom<PointT>(object, 0, 255, 0), "object");
-        v.addPointCloud<PointT>(scene, PointCloudColorHandlerCustom<PointT>(scene, 255, 0, 0),"scene");
-        v.spin();
-        v.close ();
-    }
     
     pcl::PointCloud<PointT>::Ptr scene_filtered(new pcl::PointCloud<PointT>);
     scene_filtered->points.resize (scene->points.size());
@@ -81,7 +72,7 @@ void addNoice(const std::string object_name, const std::string scene_name )
     std::cout << "here" << std::endl;
 
     std::default_random_engine generator;
-    std::normal_distribution<float> distribution(0.001, 0.002);
+    std::normal_distribution<float> distribution(0, std);
 
     for (size_t point_i = 0; point_i < scene->points.size(); point_i++)
     {
@@ -97,7 +88,7 @@ void addNoice(const std::string object_name, const std::string scene_name )
     std::cout << "here2" << scene->points.size() << " " << distribution(generator) << std::endl;
 
     // pcl::io::savePCDFileASCII("test_cloud.pcd", scene_filtered);
-    pcl::io::savePCDFile ("test_pcd.pcd", *scene_filtered);
+    //pcl::io::savePCDFile ("test_pcd.pcd", *scene_filtered);
 
     {
         PCLVisualizer v("Before global alignment2");
