@@ -102,6 +102,7 @@ int calcErrorOnPose(rw::math::Transform3D<> pose, std::vector<Matrix4f> pose_est
     //std::cout << frameWorldTTable * frameTableTScanner * frameScannerTBottle << std::endl;
 
     
+    
 
 
 

@@ -132,7 +132,7 @@ std::vector<rw::math::Transform3D<>> makePointCloudFromScene(std::vector<rw::mat
 
             while (!simscanner25d->isScanReady())
             {
-                std::cout << "Pointcloud is not ready yet. Iteration " << cnt << std::endl;
+                //std::cout << "Pointcloud is not ready yet. Iteration " << cnt << std::endl;
                 simscanner25d->update(info, state_studio);
                 cnt++;
             }

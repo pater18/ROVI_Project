@@ -42,7 +42,7 @@ void spatialFilter2( pcl::PointCloud<PointNT>::Ptr input_cloud, pcl::PointCloud<
 }
 
 
-std::vector<Matrix4f> poseEstimatePCL(const std::string object_name, const std::string scene_name)
+std::vector<Matrix4f> poseEstimatePCL(const std::string object_name, pcl::PointCloud<PointT>::Ptr scene)
 {
     // Point clouds
     // Load
@@ -53,7 +53,6 @@ std::vector<Matrix4f> poseEstimatePCL(const std::string object_name, const std::
 
   PointCloudT::Ptr object (new PointCloudT);
   PointCloudT::Ptr object_aligned (new PointCloudT);
-  PointCloudT::Ptr scene (new PointCloudT);
   FeatureCloudT::Ptr object_features (new FeatureCloudT);
   FeatureCloudT::Ptr scene_features (new FeatureCloudT);
   std::vector<Matrix4f> global_local;
@@ -61,8 +60,7 @@ std::vector<Matrix4f> poseEstimatePCL(const std::string object_name, const std::
   
   // Load object and scene
   pcl::console::print_highlight ("Loading point clouds...\n");
-  if (pcl::io::loadPLYFile<PointNT> (object_name, *object) < 0 ||
-      pcl::io::loadPCDFile<PointNT> (scene_name, *scene) < 0)
+  if (pcl::io::loadPLYFile<PointNT> (object_name, *object) < 0)
   {
     pcl::console::print_error ("Error loading object/scene file!\n");
   }
@@ -81,12 +79,11 @@ std::vector<Matrix4f> poseEstimatePCL(const std::string object_name, const std::
   pcl::VoxelGrid<PointNT> grid;
   const float leaf = 0.01f;
   grid.setLeafSize (leaf, leaf, leaf);
-  grid.setInputCloud (object);
-  grid.filter (*object);
+  //grid.setInputCloud (object);
+  //grid.filter (*object);
   grid.setInputCloud (scene);
   grid.filter (*scene);
 
-  pcl::io::savePLYFileASCII("bottle2_1.ply", *object);
   
   // Estimate normals for scene
   pcl::console::print_highlight ("Estimating scene normals...\n");
@@ -224,13 +221,13 @@ std::vector<Matrix4f> poseEstimatePCL(const std::string object_name, const std::
     } // End timing
 
 
-    // Show result
-    // {
-    //     PCLVisualizer v("After local alignment");
-    //     v.addPointCloud<PointNormal>(object_aligned, PointCloudColorHandlerCustom<PointNormal>(object_aligned, 0, 255, 0), "object_aligned");
-    //     v.addPointCloud<PointNormal>(scene, PointCloudColorHandlerCustom<PointNormal>(scene, 255, 0, 0),"scene");
-    //     v.spin();
-    // }
+    //Show result
+    {
+        PCLVisualizer v("After local alignment");
+        v.addPointCloud<PointNormal>(object_aligned, PointCloudColorHandlerCustom<PointNormal>(object_aligned, 0, 255, 0), "object_aligned");
+        v.addPointCloud<PointNormal>(scene, PointCloudColorHandlerCustom<PointNormal>(scene, 255, 0, 0),"scene");
+        v.spin();
+    }
 
     //Matrix4f final_inverse = pose * pose2;
     //final_inverse = final_inverse.inverse();

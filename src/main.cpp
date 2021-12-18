@@ -20,6 +20,7 @@
 #include "denseStereo.h"
 #include "poseEstimate.h"
 #include "poseEstimate2.h"
+#include "addNoiseToCloud.h"
 #include <pcl/point_types.h>
 #include "errorOfPose.h"
 #include <random>
@@ -44,6 +45,8 @@ using namespace pcl::search;
 using namespace pcl::visualization;
 using namespace Eigen;
 
+typedef PointNormal PointT;
+
 double uniform0to1Random()
 {
     double r = random();
@@ -64,7 +67,7 @@ int main(int argc, char** argv)
     std::uniform_real_distribution<float> uniform_distributionX(-0.3, 0.3);
     std::uniform_real_distribution<float> uniform_distributionY(0.4, 0.5);
     
-    int num_scenes = 50;
+    int num_scenes = 2;
 
     for (int i = 0; i < num_scenes; i++)
     {
@@ -84,11 +87,23 @@ int main(int argc, char** argv)
     }
 	std::vector<rw::math::Transform3D<> > poses_actual = makePointCloudFromScene(bottle_transformations);
 
+    for (float std = 0.0; std < 0.015; std += 0.0025)
+    {
+        for (int i = 0; i < num_scenes; i++)
+        {
+            pcl::PointCloud<PointT>::Ptr noisy_cloud = addNoice("scene_clouds/cloud_scene" + std::to_string(i) + ".pcd", std);
+            std::vector<Matrix4f> pose = poseEstimatePCL("bottle2_1.ply", noisy_cloud);
+            calcErrorOnPose(bottle_transformations[i], pose);
+            // {
+            //     PCLVisualizer v("Before global alignment2");
+            //     v.addPointCloud<PointT>(noisy_cloud, PointCloudColorHandlerCustom<PointT>(noisy_cloud, 255, 0, 0), "scene2");
+            //     v.spin();
+            //     v.close();
+            // }
+        }
+    }
 
-    for (float std = 0.0; std < 0.01; std += 0.0005)
-
-
-	// //std::vector<Matrix4f> pose = poseEstimatePCL("bottle.ply", "scene_clouds/cloud_scene0.pcd");
+    // //std::vector<Matrix4f> pose = poseEstimatePCL("bottle.ply", "scene_clouds/cloud_scene0.pcd");
 	// //poseEstimatePCL("bottle2.ply", "scene_clouds/cloud_scene3.pcd");
 
     // //Matrix4f pose;    

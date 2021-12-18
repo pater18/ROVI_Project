@@ -41,7 +41,7 @@ typedef PointNormal PointT;
 
 
 
-void addNoice(const std::string object_name, const std::string scene_name, float std)
+pcl::PointCloud<PointT>::Ptr addNoice(const std::string scene_name, float std)
 {
 
     // Load
@@ -66,10 +66,12 @@ void addNoice(const std::string object_name, const std::string scene_name, float
     }
 
 
-    {
-        PCLVisualizer v("Before global alignment2");
-        v.addPointCloud<PointT>(scene_filtered, PointCloudColorHandlerCustom<PointT>(scene_filtered, 255, 0, 0),"scene2");
-        v.spin();
-        v.close ();
-    }
+    // {
+    //     PCLVisualizer v("Before global alignment2");
+    //     v.addPointCloud<PointT>(scene_filtered, PointCloudColorHandlerCustom<PointT>(scene_filtered, 255, 0, 0),"scene2");
+    //     v.spin();
+    //     v.close ();
+    // }
+
+    return scene_filtered;
 }
