@@ -15,9 +15,9 @@
 #include <rw/loaders/path/PathLoader.hpp>
 #include <rw/trajectory/LinearInterpolator.hpp>
 
-//#include "RRT_planning.h"
+#include "RRT_planning.h"
 //#include "interpolate_linear.h"
-#include "interpolate_parabolic.h"
+//#include "interpolate_parabolic.h"
 
 #include <iostream>
 #include <string>
@@ -28,8 +28,8 @@
 
 int main(int argc, char** argv)
 {
-    //rrtPlanning();
-    interpolatePara();
+    rrtPlanning();
+    //interpolatePara();
     //interpolateLinear();
 	return 0;
 

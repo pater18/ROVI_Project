@@ -182,9 +182,10 @@ int rrtPlanning()
 	std::vector<double> placement1_total_length;
 	std::vector<double> placement2_total_length;
 	std::vector<double> placement3_total_length;
-	for (int k = 0; k < 1; k++)
+	int num_experiments = 50;
+	for (int k = 0; k < num_experiments; k++)
 	{
-		std::cout << "This is K-iteration " << k << std::endl;
+		std::cout << "This is K-iteration " << k + 1 << " / " << num_experiments << std::endl;
 		for (size_t i = 0; i < bottle_placements.size(); i++)
 		{
 
@@ -338,12 +339,12 @@ int rrtPlanning()
 		}
 	}
 
-	saveDataToCSV(placement1_total_times, "../csv_data/P1_time.csv");
-	saveDataToCSV(placement2_total_times, "../csv_data/P2_time.csv");
-	saveDataToCSV(placement3_total_times, "../csv_data/P3_time.csv");
-	saveDataToCSV(placement1_total_length, "../csv_data/P1_length.csv");
-	saveDataToCSV(placement2_total_length, "../csv_data/P2_length.csv");
-	saveDataToCSV(placement3_total_length, "../csv_data/P3_length.csv");
+	saveDataToCSV(placement1_total_times, "../csv_data/P1_RRT_time.csv");
+	saveDataToCSV(placement2_total_times, "../csv_data/P2_RRT_time.csv");
+	saveDataToCSV(placement3_total_times, "../csv_data/P3_RRT_time.csv");
+	saveDataToCSV(placement1_total_length, "../csv_data/P1_RRT_length.csv");
+	saveDataToCSV(placement2_total_length, "../csv_data/P2_RRT_length.csv");
+	saveDataToCSV(placement3_total_length, "../csv_data/P3_RRT_length.csv");
 
 	return 0;
 }
