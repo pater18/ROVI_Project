@@ -18,13 +18,15 @@
 #include "interpolation.h"
 #include "reachability.h"
 #include "denseStereo.h"
-#include "poseEstimate.h"
+//#include "poseEstimate.h"
 #include "poseEstimate2.h"
 #include "addNoiseToCloud.h"
+#include "saveToCSV.h"
 #include <pcl/point_types.h>
 #include "errorOfPose.h"
 #include <random>
 #include <functional>
+#include <pcl/kdtree/kdtree_flann.h>
 
 
 
@@ -67,12 +69,12 @@ int main(int argc, char** argv)
     std::uniform_real_distribution<float> uniform_distributionX(-0.3, 0.3);
     std::uniform_real_distribution<float> uniform_distributionY(0.4, 0.5);
     
-    int num_scenes = 2;
+    int num_scenes = 100;
 
     for (int i = 0; i < num_scenes; i++)
     {
         vectors.push_back(Vector3D<>( uniform_distributionX(generator), uniform_distributionY(generator), 0.21));
-        std::cout << vectors[i] << std::endl;
+        //std::cout << vectors[i] << std::endl;
     }
 
     RPY<> R1 = RPY<>(-1.571, 0, 1.571);
@@ -88,12 +90,16 @@ int main(int argc, char** argv)
 	std::vector<rw::math::Transform3D<> > poses_actual = makePointCloudFromScene(bottle_transformations);
 
     for (float std = 0.0; std < 0.015; std += 0.0025)
-    {
+    {  
+        std::vector<std::vector<double> > csv_data;
+
         for (int i = 0; i < num_scenes; i++)
         {
+            std::cout << "Proseccing cloud numer " << i << " / " << num_scenes << " with std: " << std << std::endl;
+
             pcl::PointCloud<PointT>::Ptr noisy_cloud = addNoice("scene_clouds/cloud_scene" + std::to_string(i) + ".pcd", std);
             std::vector<Matrix4f> pose = poseEstimatePCL("bottle2_1.ply", noisy_cloud);
-            calcErrorOnPose(bottle_transformations[i], pose);
+            csv_data.push_back(calcErrorOnPose(bottle_transformations[i], pose));
             // {
             //     PCLVisualizer v("Before global alignment2");
             //     v.addPointCloud<PointT>(noisy_cloud, PointCloudColorHandlerCustom<PointT>(noisy_cloud, 255, 0, 0), "scene2");
@@ -101,6 +107,9 @@ int main(int argc, char** argv)
             //     v.close();
             // }
         }
+
+        saveVelAcc(csv_data, "../csv_files/error_pos_ang_noice_" + std::to_string(int(std * 10000)) + ".csv");
+
     }
 
     // //std::vector<Matrix4f> pose = poseEstimatePCL("bottle.ply", "scene_clouds/cloud_scene0.pcd");

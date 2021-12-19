@@ -13,41 +13,41 @@ using namespace Eigen;
 USE_ROBWORK_NAMESPACE
 using namespace robwork;
 
-int calcErrorOnPose(rw::math::Transform3D<> pose, std::vector<Matrix4f> pose_esti)
+std::vector<double> calcErrorOnPose(rw::math::Transform3D<> pose, std::vector<Matrix4f> pose_esti)
 {
     rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
     if(NULL==wc)
     {
         RW_THROW("COULD NOT LOAD scene... check path!");
-        return -1;
+        // return -1;
 	}
 
     rw::kinematics::MovableFrame::Ptr bottleFrame = wc->findFrame<rw::kinematics::MovableFrame>("Bottle");
 	if(NULL==bottleFrame)
     {
 		RW_THROW("COULD not find movable frame bottle ... check model");
-		return -1;
+		// return -1;
 	}	
 
     rw::kinematics::Frame* tableFrame = wc->findFrame("Table");
 	if(NULL==tableFrame)
     {
 		RW_THROW("COULD not find movable frame table ... check model");
-		return -1;
+		// return -1;
 	}	
     
     rw::kinematics::Frame* worldFrame = wc->findFrame("WORLD");
 	if(NULL==worldFrame)
     {
 		RW_THROW("COULD not find movable frame WORLD ... check model");
-		return -1;
+		// return -1;
 	}	
 
     rw::kinematics::Frame* scannerFrame = wc->findFrame("Scanner25D");
 	if(NULL==scannerFrame)
     {
 		RW_THROW("COULD not find movable frame table ... check model");
-		return -1;
+		// return -1;
 	}	
 
     
@@ -100,16 +100,19 @@ int calcErrorOnPose(rw::math::Transform3D<> pose, std::vector<Matrix4f> pose_est
     error_angle = acos(error_angle);
     std::cout << "Error in angle: " << error_angle << std::endl;
     //std::cout << frameWorldTTable * frameTableTScanner * frameScannerTBottle << std::endl;
-
+    std::vector<double> error_pos_ang;
+    error_pos_ang.push_back(error_pos);
+    error_pos_ang.push_back(error_angle);
     
     
+    
 
 
 
 
 
 
-    return 0;
+    return error_pos_ang;
 
 
 }
