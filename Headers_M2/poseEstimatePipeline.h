@@ -82,8 +82,8 @@ void poseEstimatePipelineForMain()
         {
             std::cout << "Proseccing cloud numer " << i << " / " << num_scenes << " with std: " << std << std::endl;
 
-            pcl::PointCloud<PointT>::Ptr noisy_cloud = addNoice("scene_clouds/cloud_scene" + std::to_string(i) + ".pcd", std);
-            std::vector<Matrix4f> pose = poseEstimatePCL("bottle2_1.ply", noisy_cloud);
+            pcl::PointCloud<PointT>::Ptr noisy_cloud = addNoice("../scene_clouds/cloud_scene" + std::to_string(i) + ".pcd", std);
+            std::vector<Matrix4f> pose = poseEstimatePCL("../bottle2_1.ply", noisy_cloud);
             csv_data.push_back(calcErrorOnPose(bottle_transformations[i], pose, poses_for_rrt));
         }
         saveVelAcc(csv_data, "../csv_files/error_pos_ang_noice_" + std::to_string(int(std * 10000)) + ".csv");

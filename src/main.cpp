@@ -13,11 +13,11 @@ int main(int argc, char** argv)
 
 
     //poseEstimatePipelineForMain();
-    interpolateLinear();
+    //interpolateLinear();
     //interpolatePara();
     //rrtPlanning();'
     //reach_object();
-    //getPoseWSparceStereo();
+    getPoseWSparceStereo();
 
 	return 0;
 }

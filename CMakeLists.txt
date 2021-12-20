@@ -78,6 +78,7 @@ file(GLOB_RECURSE HEADERS               # Fetch all of the Lib's Headers
 # LIBRARIES ---------------------------------------------------------------------------------------------------------------------------------------------
 add_executable(main ${SOURCES})
 target_link_libraries(main ${ROBWORK_LIBRARIES} ${ROBWORKSTUDIO_LIBRARIES} ${OpenCV_LIBS} ${PCL_LIBRARIES})
+target_include_directories(main PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 
 

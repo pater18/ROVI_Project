@@ -497,6 +497,7 @@ int getPoseWSparceStereo(){
     int nfeatures = 0, nOctaveLayers = 11;
     double contrastThreshold = 0.04, edgeThreshold = 0.0, sigma = 1.1;
 
+
     while(key != 113){
 
         getKeyPressAction(key, nfeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma);
@@ -523,6 +524,10 @@ int getPoseWSparceStereo(){
         // Find features on left and right image within a mask
         //cv::Ptr<cv::Feature2D> sift = cv::SIFT::create();
         cv::Ptr<cv::Feature2D> sift = cv::SIFT::create(nfeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma);
+        if (NULL == sift)
+        {
+            std::cout << "sift = NULL" << std::endl;
+        }
         std::vector<cv::KeyPoint> keypoints_left, keypoints_right;
         cv::DescriptorExtractor extractor = cv::DescriptorExtractor();
         cv::Mat descriptor_left, descriptor_right;

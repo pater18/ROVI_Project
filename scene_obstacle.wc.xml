@@ -84,11 +84,6 @@
 	<Property name="Camera" desc="[fovy,width,height]">50 640 480</Property>
 </Frame>
 
-<Frame name="Scanner25D" refframe="WORLD" type="Movable">
-	<Pos>0 1.033 1.325</Pos>
-	<RPY>0 0 -25</RPY>
-	<Property name="Scanner25D" desc="[fovy,width,height]">50 640 480</Property>
-</Frame>
 
 <CollisionSetup file="SceneCollisionSetup.prox.xml" /> 
 
