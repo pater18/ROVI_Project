@@ -27,6 +27,7 @@
 #include <random>
 #include <functional>
 #include <pcl/kdtree/kdtree_flann.h>
+#include "RRT.h"
 
 
 
@@ -69,7 +70,7 @@ int main(int argc, char** argv)
     std::uniform_real_distribution<float> uniform_distributionX(-0.3, 0.3);
     std::uniform_real_distribution<float> uniform_distributionY(0.4, 0.5);
     
-    int num_scenes = 100;
+    int num_scenes = 10;
 
     for (int i = 0; i < num_scenes; i++)
     {
@@ -89,7 +90,9 @@ int main(int argc, char** argv)
     }
 	std::vector<rw::math::Transform3D<> > poses_actual = makePointCloudFromScene(bottle_transformations);
 
-    for (float std = 0.0; std < 0.015; std += 0.0025)
+    std::vector<Matrix4f> poses_for_rrt;
+
+    for (float std = 0.0; std < 0.015; std += 0.015)
     {  
         std::vector<std::vector<double> > csv_data;
 
@@ -99,7 +102,7 @@ int main(int argc, char** argv)
 
             pcl::PointCloud<PointT>::Ptr noisy_cloud = addNoice("scene_clouds/cloud_scene" + std::to_string(i) + ".pcd", std);
             std::vector<Matrix4f> pose = poseEstimatePCL("bottle2_1.ply", noisy_cloud);
-            csv_data.push_back(calcErrorOnPose(bottle_transformations[i], pose));
+            csv_data.push_back(calcErrorOnPose(bottle_transformations[i], pose, poses_for_rrt));
             // {
             //     PCLVisualizer v("Before global alignment2");
             //     v.addPointCloud<PointT>(noisy_cloud, PointCloudColorHandlerCustom<PointT>(noisy_cloud, 255, 0, 0), "scene2");
@@ -107,10 +110,10 @@ int main(int argc, char** argv)
             //     v.close();
             // }
         }
-
         saveVelAcc(csv_data, "../csv_files/error_pos_ang_noice_" + std::to_string(int(std * 10000)) + ".csv");
-
     }
+
+    rrtPlanning(poses_for_rrt);
 
     // //std::vector<Matrix4f> pose = poseEstimatePCL("bottle.ply", "scene_clouds/cloud_scene0.pcd");
 	// //poseEstimatePCL("bottle2.ply", "scene_clouds/cloud_scene3.pcd");

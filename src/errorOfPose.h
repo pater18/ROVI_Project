@@ -13,7 +13,7 @@ using namespace Eigen;
 USE_ROBWORK_NAMESPACE
 using namespace robwork;
 
-std::vector<double> calcErrorOnPose(rw::math::Transform3D<> pose, std::vector<Matrix4f> pose_esti)
+std::vector<double> calcErrorOnPose(rw::math::Transform3D<> pose, std::vector<Matrix4f> pose_esti, std::vector<Matrix4f> &poses_for_rrt)
 {
     rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
     if(NULL==wc)
@@ -73,6 +73,7 @@ std::vector<double> calcErrorOnPose(rw::math::Transform3D<> pose, std::vector<Ma
     //Eigen::Matrix4d pose_esti_double = pose_esti.cast<double> ();  
 
     Matrix4f final_pose = pose_esti[1] * pose_esti[0];
+    poses_for_rrt.push_back(final_pose);
 
     double error_pos = pow(final_pose(0, 3) - frameScannerTBottle_e(0,3), 2) + pow(final_pose(1, 3) - frameScannerTBottle_e(1,3), 2) + pow(final_pose(2, 3) - frameScannerTBottle_e(2,3), 2);
     error_pos = sqrt(error_pos);
