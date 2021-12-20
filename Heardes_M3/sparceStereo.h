@@ -17,20 +17,18 @@
 #include <rwlibs/simulation/GLFrameGrabber.hpp>
 #include <rwlibs/simulation/SimulatedCamera.hpp>
 #include <rwslibs/rwstudioapp/RobWorkStudioApp.hpp>
-#include "Camera.h"
 
 #include <opencv2/opencv.hpp>
-//#include <opencv2/features2d/features2d.hpp>
 #include <opencv2/xfeatures2d.hpp>
 #include <opencv2/features2d.hpp>
 #include <opencv2/xfeatures2d/nonfree.hpp>
 
-
 #include <vector>
-
 #include <iostream>
 #include <string>
 #include <array>
+#include "Camera.h"
+
 
 USE_ROBWORK_NAMESPACE
 using namespace robwork;
@@ -199,8 +197,8 @@ boundingBox templateMatch(const cv::Mat image){
     cv::Mat img_display, result;
     boundingBox resultBox; 
 
-    // cv::Mat templateImage =cv::imread("../build/bottle.png");
-    cv::Mat templateImage = cv::imread("../build/bottle.png");
+
+    cv::Mat templateImage = cv::imread("../Template/bottle.png");
 
     image.copyTo(img_display);
     
@@ -337,7 +335,7 @@ void findPose(  rw::models::WorkCell::Ptr wc, std::vector<cv::Point3f> objectCoo
     cameraMatrix.at<double> (0,2) = 320;
     cameraMatrix.at<double> (1,2) = 240;
     cameraMatrix.at<double> (2,2) = 1;
-//#include "denseStereo.h"
+
     
     rw::kinematics::State state = wc->getDefaultState();        
     rw::kinematics::Frame* cameraFrame = wc->findFrame("Camera_Left");
