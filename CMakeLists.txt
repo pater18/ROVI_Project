@@ -70,9 +70,10 @@ FIND_PACKAGE(OpenMP)
 file(GLOB SOURCES src/*.cpp)
 
 
+
 # LIBRARIES ---------------------------------------------------------------------------------------------------------------------------------------------
-add_executable(Interpolation ${SOURCES})
-target_link_libraries(Interpolation ${ROBWORK_LIBRARIES} ${ROBWORKSTUDIO_LIBRARIES} ${OpenCV_LIBS} ${PCL_LIBRARIES})
+add_executable(main ${SOURCES})
+target_link_libraries(main ${ROBWORK_LIBRARIES} ${ROBWORKSTUDIO_LIBRARIES} ${OpenCV_LIBS} ${PCL_LIBRARIES})
 
 
 

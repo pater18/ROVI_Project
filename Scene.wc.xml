@@ -66,35 +66,8 @@
 	<Drawable name="SphereGeo" refframe="Sphere" colmodel="Enabled">
 		<Sphere radius="0.3"/>
 	</Drawable>
-</Frame>
-
-<Frame name="Sphere1" refframe="WORLD" type="Movable">
-	<RPY>0 0 0</RPY> <Pos>-0.5 0 0.3</Pos>
-	<Drawable name="SphereGeo1" refframe="Sphere1" colmodel="Enabled">
-		<Sphere radius="0.3"/>
-	</Drawable>
-</Frame>
-
-<Frame name="Sphere2" refframe="WORLD" type="Movable">
-	<RPY>0 0 0</RPY> <Pos>0.5 0 0.9</Pos>
-	<Drawable name="SphereGeo" refframe="Sphere2" colmodel="Enabled">
-		<Sphere radius="0.3"/>
-	</Drawable>
-</Frame>
-
-<Frame name="Sphere3" refframe="WORLD" type="Movable">
-	<RPY>0 0 0</RPY> <Pos>-0.5 0 0.9</Pos>
-	<Drawable name="SphereGeo1" refframe="Sphere3" colmodel="Enabled">
-		<Sphere radius="0.1"/>
-	</Drawable>
 </Frame> -->
 
-<Frame name="Sphere4" refframe="WORLD" type="Movable">
-	<RPY>0 0 0</RPY> <Pos>-0.00 0.50 1.020</Pos>
-	<Drawable name="SphereGeo1" refframe="Sphere3" colmodel="Enabled">
-		<Sphere radius="0.02"/>
-	</Drawable>
-</Frame>  
 
 <!-- Cameras -->
 

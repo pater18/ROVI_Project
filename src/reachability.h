@@ -1,3 +1,5 @@
+
+
 //#include <rw/rw.hpp>
 #include <rw/invkin.hpp>
 #include <rwlibs/proximitystrategies/ProximityStrategyFactory.hpp>
@@ -179,7 +181,7 @@ void generateHeatmap(std::vector<testParam> test){
 	// }
 
 
-	cv::Mat table = cv::imread("Table.png");
+	cv::Mat table = cv::imread("../Template/Table.png");
 	cv::Mat heatmap; 
 	cv::copyTo(table, heatmap, cv::noArray());
 	//x start = 145 pixels, xslut 650
@@ -274,7 +276,7 @@ void testimage(){
 	cv::Vec3b(0,255,93), cv::Vec3b(0,255,63), cv::Vec3b(0,255,30), cv::Vec3b(0,255,0)};
 
 
-	cv::Mat table = cv::imread("Table.png");
+	cv::Mat table = cv::imread("../Template/Table.png");
 	cv::Mat heatmap; 
 	cv::copyTo(table, heatmap, cv::noArray());
 	int boxSizeY = table.rows / 13;  
@@ -296,9 +298,6 @@ void testimage(){
 void reach_object()
 {
 
-	
-	//testimage();
-
 	//load workcell
 	rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
 	if(NULL==wc){
@@ -308,14 +307,6 @@ void reach_object()
         std::cout << "Workcell is loaded" << std::endl;
     }
 
-	// find relevant frames
-	// rw::kinematics::MovableFrame::Ptr cylinderFrame = wc->findFrame<rw::kinematics::MovableFrame>("Cylinder");
-    // rw::kinematics::MovableFrame::Ptr botttleFrame = wc->findFrame<rw::kinematics::MovableFrame>("Bottle");
-    // rw::kinematics::MovableFrame::Ptr squareFrame = wc->findFrame<rw::kinematics::MovableFrame>("Square");
-	// if(NULL==cylinderFrame || NULL==botttleFrame || NULL==squareFrame){
-	// 	RW_THROW("COULD not find movable frame object ... check model");
-	// 	return ;
-	// }
 
 	rw::models::SerialDevice::Ptr robotUR6 = wc->findDevice<rw::models::SerialDevice>("UR-6-85-5-A");
 	if(NULL==robotUR6){

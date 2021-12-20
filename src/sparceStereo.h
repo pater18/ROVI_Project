@@ -17,21 +17,18 @@
 #include <rwlibs/simulation/GLFrameGrabber.hpp>
 #include <rwlibs/simulation/SimulatedCamera.hpp>
 #include <rwslibs/rwstudioapp/RobWorkStudioApp.hpp>
-#include "Camera.h"
-#include "PCL.h"
-#include "interpolation.h"
+
 #include <opencv2/opencv.hpp>
-//#include <opencv2/features2d/features2d.hpp>
 #include <opencv2/xfeatures2d.hpp>
 #include <opencv2/features2d.hpp>
 #include <opencv2/xfeatures2d/nonfree.hpp>
 
-
 #include <vector>
-
 #include <iostream>
 #include <string>
 #include <array>
+#include "Camera.h"
+
 
 USE_ROBWORK_NAMESPACE
 using namespace robwork;
@@ -200,8 +197,8 @@ boundingBox templateMatch(const cv::Mat image){
     cv::Mat img_display, result;
     boundingBox resultBox; 
 
-    // cv::Mat templateImage =cv::imread("../build/bottle.png");
-    cv::Mat templateImage = cv::imread("../build/bottle.png");
+
+    cv::Mat templateImage = cv::imread("../Template/bottle.png");
 
     image.copyTo(img_display);
     
