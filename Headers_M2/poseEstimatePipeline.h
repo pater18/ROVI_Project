@@ -15,17 +15,16 @@
 #include <rw/loaders/image/ImageLoader.hpp>
 #include <rw/loaders/path/PathLoader.hpp>
 #include <rw/trajectory/LinearInterpolator.hpp>
-//#include "reachability.h"
-#include "denseStereo.h"
-#include "poseEstimate.h"
-//#include "poseEstimate2.h"
-#include "addNoiseToCloud.h"
-#include "saveToCSV.h"
-#include <pcl/point_types.h>
-#include "errorOfPose.h"
 #include <random>
 #include <functional>
 #include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/point_types.h>
+
+#include "getPointCloud.h"
+#include "poseEstimate.h"
+#include "addNoiseToCloud.h"
+#include "saveToCSV.h"
+#include "errorOfPose.h"
 #include "RRT.h"
 
 #include <iostream>
