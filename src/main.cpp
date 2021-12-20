@@ -11,13 +11,13 @@
 int main(int argc, char** argv)
 {
 
-
-    //poseEstimatePipelineForMain();
+    
+    poseEstimatePipelineForMain(); // Depth sensor M1
     //interpolateLinear();
     //interpolatePara();
     //rrtPlanning();'
     //reach_object();
-    getPoseWSparceStereo();
+    //getPoseWSparceStereo();
 
 	return 0;
 }
