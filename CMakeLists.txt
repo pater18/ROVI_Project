@@ -25,6 +25,7 @@ ENDIF()
 
 #Use RobWork and RobWorkSim
 
+
 FIND_PACKAGE(RobWork REQUIRED)
 FIND_PACKAGE(RobWorkStudio REQUIRED)
 find_package(OpenCV REQUIRED)
@@ -34,6 +35,7 @@ include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
+set(cmake -D OPENCV_ENABLE_NONFREE = ON )
 
 
 SET(RobWork_DIR ${RW_ROOT}/cmake) 

@@ -16,7 +16,8 @@
 #include <rw/trajectory/LinearInterpolator.hpp>
 #include "interpolation.h"
 #include "reachability.h"
-#include "denseStereo.h"
+//#include "denseStereo.h"
+#include "sparceStereo.h"
 
 
 
@@ -30,7 +31,10 @@ using namespace robwork;
 
 int main(int argc, char** argv)
 {
-	getPoseWithDenseStereo();
+	//reach_object();
+	getPoseWSparceStereo();
+
+	//getPoseWithDenseStereo();
 
 	return 0;
 }

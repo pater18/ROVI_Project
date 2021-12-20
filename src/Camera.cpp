@@ -10,17 +10,17 @@ MyCamera::MyCamera (const std::string name, rw::models::WorkCell::Ptr wc)
     if (!properties.has ("Camera"))
         RW_THROW ("Camera frame does not have Camera property.");
     
-    const std::string* ptr = MyCamera::camera_frame->getPropertyMap().getPtr<std::string>("Camera");
-    if (ptr) 
-    {
-        std::cout << "Property 'Camera' has value " << *ptr << "\n";
-    }
+    //const std::string* ptr = MyCamera::camera_frame->getPropertyMap().getPtr<std::string>("Camera");
+    // if (ptr) 
+    // {
+    //     std::cout << "Property 'Camera' has value " << *ptr << "\n";
+    // }
     const std::string parameters = properties.get< std::string > ("Camera");
     std::istringstream iss (parameters, std::istringstream::in);
 
     iss >> MyCamera::fovy >> MyCamera::width >> MyCamera::height;
-    std::cout << "Camera properties: fov " << MyCamera::fovy << " width " 
-                    << MyCamera::width << " height " << MyCamera::height << std::endl;
+    // std::cout << "Camera properties: fov " << MyCamera::fovy << " width " 
+    //                 << MyCamera::width << " height " << MyCamera::height << std::endl;
 
 }
 
