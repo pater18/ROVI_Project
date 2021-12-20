@@ -52,7 +52,7 @@ struct testParam
 }; 
 	
 
-std::vector<rw::math::Q> getConfigurations(const std::string nameGoal, const std::string nameTcp, rw::models::SerialDevice::Ptr robot, rw::models::WorkCell::Ptr wc, rw::kinematics::State state)
+std::vector<rw::math::Q> getConfigReach(const std::string nameGoal, const std::string nameTcp, rw::models::SerialDevice::Ptr robot, rw::models::WorkCell::Ptr wc, rw::kinematics::State state)
 {
     // Get, make and print name of frames
     const std::string robotName = robot->getName();
@@ -97,7 +97,7 @@ void testBasePlacement(	rw::models::WorkCell::Ptr wc, rw::models::SerialDevice::
 	bool validSolution = false;
 
 	//Check for solutions at the pick area
-	std::vector<rw::math::Q> solutions = getConfigurations(object, "GraspTCP", robotUR6, wc, state);
+	std::vector<rw::math::Q> solutions = getConfigReach(object, "GraspTCP", robotUR6, wc, state);
 	for(unsigned int i=0; i<solutions.size(); i++){
 		// set the robot in that configuration and check if it is in collision
 		robotUR6->setQ(solutions[i], state);
@@ -115,7 +115,7 @@ void testBasePlacement(	rw::models::WorkCell::Ptr wc, rw::models::SerialDevice::
 
 	if (test.newBasePos) {
 		//Check for solutions at the place-up area
-		solutions = getConfigurations("Square2", "GraspTCP", robotUR6, wc, state);
+		solutions = getConfigReach("Square2", "GraspTCP", robotUR6, wc, state);
 		for(unsigned int i=0; i<solutions.size(); i++){
 			// set the robot in that configuration and check if it is in collision
 			robotUR6->setQ(solutions[i], state);
@@ -181,7 +181,11 @@ void generateHeatmap(std::vector<testParam> test){
 	// }
 
 
-	cv::Mat table = cv::imread("../Template/Table.png");
+	cv::Mat table = cv::imread("../Templates/Table.png");
+	if (table.empty()){
+		std::cout << "Could not read the table.png in function generate heatmp" << std::endl;
+	}
+
 	cv::Mat heatmap; 
 	cv::copyTo(table, heatmap, cv::noArray());
 	//x start = 145 pixels, xslut 650
@@ -190,7 +194,7 @@ void generateHeatmap(std::vector<testParam> test){
 	int countX = 0;
 	int countY = 0;
 	divident /= 2;
-	std::cout << "Box x = " << boxSizeX << " Box y = " << boxSizeY << " test size " << test.size() <<  std::endl;
+	//std::cout << "Box x = " << boxSizeX << " Box y = " << boxSizeY << " test size " << test.size() <<  std::endl;
 	
 	for (size_t i = 0; i < test.size(); i++) {
 		int xstart = countX * boxSizeX + 145;
@@ -261,7 +265,7 @@ void generateHeatmap(std::vector<testParam> test){
 
 
 	cv::imshow("Heatmap combined", dist);
-	cv::imwrite("Heatmap_grip_Top.png", dist);
+	cv::imwrite("Heatmap_grip_side.png", dist);
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 	
@@ -321,7 +325,7 @@ void reach_object()
 	std::string bottle = "Bottle";
 	std::string square = "Square";
 	std::string cylinder = "Cylinder";
-	std::string object = square;
+	std::string object = bottle;
 
 
 	bestBasePosition basePos; 
@@ -346,11 +350,7 @@ void reach_object()
 
 
 	testParam test;
-
 	std::vector<testParam> testValues;
-	std::ofstream heatmap;
-	//heatmap.open("heatmap.csv");
-	//heatmap << "Base x, Base y, Solutions for Pickarea, Can reach place area\n";
 	float count = 1;
 	for (double x = -0.3; x <= 0.3; x += 0.05){ // 12
 		for (double y = -0.3; y <= 0.3; y += 0.05){ // 12
@@ -360,11 +360,10 @@ void reach_object()
 			test.newBasePos = true;
 			test.numberOfSolutions = 0;
 			test.solutionsForPickArea = 0;
-
 			for (double obj_y = 0.358; obj_y <= 0.527; obj_y += 0.169 ){ // 2
 				for (double obj_x = -0.35; obj_x <= 0.36; obj_x += 0.1 ){ // 8
 					testVariables.testObjectPosition = rw::math::Vector3D<>(obj_x, obj_y, 0.21);
-					
+			
 					// GraspTCP <RPY>0 0 -90</RPY> takes the object from the top
 					testBasePlacement(wc, robotUR6, testVariables, basePos, object, tStatePath, time, test);
 					test.newBasePos = false;
@@ -379,11 +378,10 @@ void reach_object()
 
 			testValues.push_back(test);
 
-			// heatmap << x << "," << y << "," << test.solutionsForPickArea << "," << test.canReachPlaceArea << std::endl;
 		}
 	}
 	generateHeatmap(testValues);
-	//heatmap.close();
+
 	std::cout << "Base position\n" << "[" << basePos.x << " " << basePos.y << "]" << " with collision free solutions : " << basePos.numFreeCollisions << std::endl;
 
 }

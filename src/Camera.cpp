@@ -1,4 +1,4 @@
-#include "Camera.h"
+#include "Headers_M3/Camera.h"
 
 MyCamera::MyCamera (const std::string name, rw::models::WorkCell::Ptr wc)
 {
