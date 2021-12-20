@@ -15,7 +15,6 @@
 #include <rw/loaders/image/ImageLoader.hpp>
 #include <rw/loaders/path/PathLoader.hpp>
 #include <rw/trajectory/LinearInterpolator.hpp>
-#include "interpolation.h"
 #include "reachability.h"
 #include "denseStereo.h"
 //#include "poseEstimate.h"
@@ -70,7 +69,7 @@ int main(int argc, char** argv)
     std::uniform_real_distribution<float> uniform_distributionX(-0.3, 0.3);
     std::uniform_real_distribution<float> uniform_distributionY(0.4, 0.5);
     
-    int num_scenes = 10;
+    int num_scenes = 3;
 
     for (int i = 0; i < num_scenes; i++)
     {
@@ -92,7 +91,7 @@ int main(int argc, char** argv)
 
     std::vector<Matrix4f> poses_for_rrt;
 
-    for (float std = 0.0; std < 0.015; std += 0.015)
+    for (float std = 0.0; std < 0.015; std += 0.025)
     {  
         std::vector<std::vector<double> > csv_data;
 

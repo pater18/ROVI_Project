@@ -39,7 +39,7 @@ std::vector<rw::math::Transform3D<>> makePointCloudFromScene(std::vector<rw::mat
 {
 
     rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
-    printDeviceNames(*wc);
+    //printDeviceNames(*wc);
 
     if (NULL == wc)
     {

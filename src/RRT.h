@@ -25,7 +25,7 @@
 #include <rwlibs/pathoptimization/PathLengthOptimizer.hpp>
 #include <rw/pathplanning/PathAnalyzer.hpp>
 
-#include "saveToCSV.h"
+//#include "saveToCSV.h"
 
 #include <iostream>
 #include <string>
@@ -187,7 +187,7 @@ int rrtPlanning(std::vector<Eigen::Matrix4f> bottle_positions_esti)
 	std::vector<double> placement1_total_length;
 	std::vector<double> placement2_total_length;
 	std::vector<double> placement3_total_length;
-	int num_experiments = 50;
+	int num_experiments = 3;
 	for (int k = 0; k < num_experiments; k++)
 	{
 		std::cout << "This is K-iteration " << k + 1 << " / " << num_experiments << std::endl;
@@ -199,6 +199,7 @@ int rrtPlanning(std::vector<Eigen::Matrix4f> bottle_positions_esti)
 
 			//load workcell
 			rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
+
 			//printDeviceNames(*wc);
 
 			if (NULL == wc)
@@ -344,12 +345,12 @@ int rrtPlanning(std::vector<Eigen::Matrix4f> bottle_positions_esti)
 		}
 	}
 
-	saveVelAccRRT(placement1_total_times, "../csv_data/P1_RRT_time.csv");
-	saveVelAccRRT(placement2_total_times, "../csv_data/P2_RRT_time.csv");
-	saveVelAccRRT(placement3_total_times, "../csv_data/P3_RRT_time.csv");
-	saveVelAccRRT(placement1_total_length, "../csv_data/P1_RRT_length.csv");
-	saveVelAccRRT(placement2_total_length, "../csv_data/P2_RRT_length.csv");
-	saveVelAccRRT(placement3_total_length, "../csv_data/P3_RRT_length.csv");
+	saveDataToCSV(placement1_total_times, "../csv_data/P1_RRT_time.csv");
+	saveDataToCSV(placement2_total_times, "../csv_data/P2_RRT_time.csv");
+	saveDataToCSV(placement3_total_times, "../csv_data/P3_RRT_time.csv");
+	saveDataToCSV(placement1_total_length, "../csv_data/P1_RRT_length.csv");
+	saveDataToCSV(placement2_total_length, "../csv_data/P2_RRT_length.csv");
+	saveDataToCSV(placement3_total_length, "../csv_data/P3_RRT_length.csv");
 
 	return 0;
 }
