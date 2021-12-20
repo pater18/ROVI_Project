@@ -9,10 +9,11 @@ int main(int argc, char** argv)
 {
 
 
-    //poseEstimatePipelineForMain();
-    interpolateLinear();
+    //interpolateLinear();
     //interpolatePara();
     //rrtPlanning();
+    poseEstimatePipelineForMain();
+
 
 	return 0;
 }

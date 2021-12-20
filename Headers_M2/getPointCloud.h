@@ -106,7 +106,7 @@ std::vector<rw::math::Transform3D<>> makePointCloudFromScene(std::vector<rw::mat
             }
 
             const rw::geometry::PointCloud pointcloud = simscanner25d->getScan();
-            pointcloud.savePCD(pointcloud, "scene_clouds/cloud_scene" + std::to_string(i) + ".pcd");
+            pointcloud.savePCD(pointcloud, "../scene_clouds/cloud_scene" + std::to_string(i) + ".pcd");
         }
 
 
