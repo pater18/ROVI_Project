@@ -11,7 +11,6 @@ add_compile_options(-std=c++17)
 # Used to resolve absolute path names
 SET(ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 
-
 set(CMAKE_VERBOSE_MAKEFILE false) 
 
 # Now set the RW root
@@ -26,15 +25,17 @@ ENDIF()
 
 #Use RobWork and RobWorkSim
 
+
 FIND_PACKAGE(RobWork REQUIRED)
 FIND_PACKAGE(RobWorkStudio REQUIRED)
 find_package(OpenCV REQUIRED)
 #find_package(PCL 1.4 REQUIRED)
-find_package(PCL 1.4 REQUIRED COMPONENTS common io registration filters segmentation visualization)
+find_package(PCL 1.4 REQUIRED COMPONENTS common io filters segmentation visualization)
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
+set(cmake -D OPENCV_ENABLE_NONFREE = ON )
 
 
 SET(RobWork_DIR ${RW_ROOT}/cmake) 
@@ -70,15 +71,13 @@ file(GLOB SOURCES src/*.cpp)
 file(GLOB_RECURSE HEADERS               # Fetch all of the Lib's Headers 
    ${CMAKE_CURRENT_SOURCE_DIR}/Headers_M2/*.h
    ${CMAKE_CURRENT_SOURCE_DIR}/Headers_MotionPlanning/*.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/Headers_M3/*.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/Headers_Reachability/*.h
    )
    
-
-
 # LIBRARIES ---------------------------------------------------------------------------------------------------------------------------------------------
-add_executable(Interpolation ${SOURCES})
-target_link_libraries(Interpolation ${ROBWORK_LIBRARIES} ${ROBWORKSTUDIO_LIBRARIES} ${OpenCV_LIBS} ${PCL_LIBRARIES})
-target_include_directories(Interpolation PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
+add_executable(main ${SOURCES})
+target_link_libraries(main ${ROBWORK_LIBRARIES} ${ROBWORKSTUDIO_LIBRARIES} ${OpenCV_LIBS} ${PCL_LIBRARIES})
 
 
 
