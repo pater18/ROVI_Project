@@ -68,9 +68,13 @@ FIND_PACKAGE(OpenMP)
   ENDIF()
 
 file(GLOB SOURCES src/*.cpp)
-
-
-
+file(GLOB_RECURSE HEADERS               # Fetch all of the Lib's Headers 
+   ${CMAKE_CURRENT_SOURCE_DIR}/Headers_M2/*.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/Headers_MotionPlanning/*.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/Headers_M3/*.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/Headers_Reachability/*.h
+   )
+   
 # LIBRARIES ---------------------------------------------------------------------------------------------------------------------------------------------
 add_executable(main ${SOURCES})
 target_link_libraries(main ${ROBWORK_LIBRARIES} ${ROBWORKSTUDIO_LIBRARIES} ${OpenCV_LIBS} ${PCL_LIBRARIES})
