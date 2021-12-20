@@ -129,7 +129,7 @@ int interpolatePara()
     std::vector<rw::math::Q> dx;
     std::vector<rw::math::Q> ddx;
 
-	for (int k = 0; k < 1; k++)
+	for (int k = 0; k < 5; k++)
 	{
 		for (size_t i = 0; i < bottle_placements.size(); i++)
 		{
@@ -260,7 +260,7 @@ int interpolatePara()
 				}
 
 				//interpolateBetweenPointsPara(para2, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
-				//interpolateBetweenPointsPara(para3, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
+				// interpolateBetweenPointsPara(para3, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
 
 				interpolateBetweenPoints(interpolated_pointsBottlet4, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
 				interpolateBetweenPoints(interpolated_points4t5, qpath_interpolated, x, dx, ddx, robotUR5, tStatePath, time, state);
@@ -309,9 +309,9 @@ int interpolatePara()
 	saveDataToCSV(placement1_total_length, "../csv_data/P1_para_length.csv");
 	saveDataToCSV(placement2_total_length, "../csv_data/P2_para_length.csv");
 	saveDataToCSV(placement3_total_length, "../csv_data/P3_para_length.csv");
-    saveVelAcc(x, "../csv_data/P1_lin_pos.csv");
-    saveVelAcc(dx, "../csv_data/P1_lin_vel.csv");
-    saveVelAcc(ddx, "../csv_data/P1_lin_acc.csv");
+    saveVelAcc(x, "../csv_data/P1_para_pos.csv");
+    saveVelAcc(dx, "../csv_data/P1_para_vel.csv");
+    saveVelAcc(ddx, "../csv_data/P1_para_acc.csv");
     // saveVelAcc(x, "../csv_data/P1_lin_pos.csv");
     // saveVelAcc(dx, "../csv_data/P1_lin_vel.csv");
     // saveVelAcc(ddx, "../csv_data/P1_lin_acc.csv");
