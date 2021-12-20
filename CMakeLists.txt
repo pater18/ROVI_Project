@@ -68,7 +68,9 @@ FIND_PACKAGE(OpenMP)
 
 file(GLOB SOURCES src/*.cpp)
 file(GLOB_RECURSE HEADERS               # Fetch all of the Lib's Headers 
-   ${CMAKE_CURRENT_SOURCE_DIR}/Headers_M2/*.h)
+   ${CMAKE_CURRENT_SOURCE_DIR}/Headers_M2/*.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/Headers_MotionPlanning/*.h
+   )
    
 
 
