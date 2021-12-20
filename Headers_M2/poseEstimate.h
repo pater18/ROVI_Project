@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Eigen/Core>
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
@@ -152,31 +154,21 @@ std::vector<Matrix4f> poseEstimatePCL(const std::string object_name, pcl::PointC
     align.align(*object_aligned);
   }
 
-  Eigen::Matrix4f transformation;
+  Eigen::Matrix4f global_pose;
   // if (align.hasConverged ())
   // {
   // Print results
   printf("\n");
-  transformation = align.getFinalTransformation();
-  pcl::console::print_info("    | %6.3f %6.3f %6.3f | \n", transformation(0, 0), transformation(0, 1), transformation(0, 2));
-  pcl::console::print_info("R = | %6.3f %6.3f %6.3f | \n", transformation(1, 0), transformation(1, 1), transformation(1, 2));
-  pcl::console::print_info("    | %6.3f %6.3f %6.3f | \n", transformation(2, 0), transformation(2, 1), transformation(2, 2));
+  global_pose = align.getFinalTransformation();
+  pcl::console::print_info("    | %6.3f %6.3f %6.3f | \n", global_pose(0, 0), global_pose(0, 1), global_pose(0, 2));
+  pcl::console::print_info("R = | %6.3f %6.3f %6.3f | \n", global_pose(1, 0), global_pose(1, 1), global_pose(1, 2));
+  pcl::console::print_info("    | %6.3f %6.3f %6.3f | \n", global_pose(2, 0), global_pose(2, 1), global_pose(2, 2));
   pcl::console::print_info("\n");
-  pcl::console::print_info("t = < %0.3f, %0.3f, %0.3f >\n", transformation(0, 3), transformation(1, 3), transformation(2, 3));
+  pcl::console::print_info("t = < %0.3f, %0.3f, %0.3f >\n", global_pose(0, 3), global_pose(1, 3), global_pose(2, 3));
   pcl::console::print_info("\n");
   pcl::console::print_info("Inliers: %i/%i\n", align.getInliers().size(), object->size());
 
-  // Show alignment
-  // pcl::visualization::PCLVisualizer visu("Alignment");
-  // visu.addPointCloud (scene, ColorHandlerT (scene, 0.0, 255.0, 0.0), "scene");
-  // visu.addPointCloud (object_aligned, ColorHandlerT (object_aligned, 0.0, 0.0, 255.0), "object_aligned");
-  // visu.spin ();
-  // }
-  // else
-  // {
-  //   pcl::console::print_error ("Alignment failed!\n");
-  //   //return (1);
-  // }
+
 
   // Create a k-d tree for scene
   search::KdTree<PointNormal> tree2;
@@ -187,8 +179,8 @@ std::vector<Matrix4f> poseEstimatePCL(const std::string object_name, pcl::PointC
   const float thressq2 = 0.01 * 0.01;
 
   // Start ICP
-  Matrix4f pose2 = Matrix4f::Identity();
-  //Matrix4f pose2 = pose;
+  Matrix4f pose_local = Matrix4f::Identity();
+  //Matrix4f pose_local = pose;
   {
     ScopeTime t("ICP");
     cout << "Starting ICP..." << endl;
@@ -216,11 +208,11 @@ std::vector<Matrix4f> poseEstimatePCL(const std::string object_name, pcl::PointC
       TransformationEstimationSVD<PointNormal, PointNormal> est;
       est.estimateRigidTransformation(*object_aligned, idxobj, *scene, idxscn, T);
 
-      // 3) Apply pose2
+      // 3) Apply pose_local
       transformPointCloud(*object_aligned, *object_aligned, T);
 
       // 4) Update result
-      pose2 = T * pose2;
+      pose_local = T * pose_local;
     }
 
     // Compute inliers and RMSE
@@ -234,8 +226,8 @@ std::vector<Matrix4f> poseEstimatePCL(const std::string object_name, pcl::PointC
         ++inliers, rmse += distsq[i][0];
     rmse = sqrtf(rmse / inliers);
 
-    // Print pose2
-    // cout << "Got the following pose2:" << endl << pose2 << endl;
+    // Print pose_local
+    // cout << "Got the following pose_local:" << endl << pose_local << endl;
     // cout << "Inliers: " << inliers << "/" << object->size() << endl;
     // cout << "RMSE: " << rmse << endl;
   } // End timing
@@ -248,30 +240,13 @@ std::vector<Matrix4f> poseEstimatePCL(const std::string object_name, pcl::PointC
   //     v.spin();
   // }
 
-  //Matrix4f final_inverse = pose * pose2;
-  //final_inverse = final_inverse.inverse();
-  Matrix4f local_global = pose2 * transformation;
-  Matrix4f global1_local = transformation * pose2;
-  //std::cout << "Local * Global :" << std::endl << local_global << std::endl;
-  //std::cout << "Global * Local :" << std::endl << global1_local << std::endl;
 
-  Matrix4f final_pose = local_global;
-  Matrix3f rotation = Matrix3f::Identity();
-  rotation(0, 0) = final_pose(0, 0);
-  rotation(0, 1) = final_pose(0, 1);
-  rotation(0, 2) = final_pose(0, 2);
-  rotation(1, 0) = final_pose(1, 0);
-  rotation(1, 1) = final_pose(1, 1);
-  rotation(1, 2) = final_pose(1, 2);
-  rotation(2, 0) = final_pose(2, 0);
-  rotation(2, 1) = final_pose(2, 1);
-  rotation(2, 2) = final_pose(2, 2);
-  Vector3f ea = rotation.eulerAngles(0, 1, 2);
-  std::cout << "Euler angels: " << std::endl
-            << ea << std::endl;
+  Matrix4f local_global = pose_local * global_pose;
 
-  global_local.push_back(transformation);
-  global_local.push_back(pose2);
+  std::cout << "Final pose: " << local_global << std::endl;
+
+  global_local.push_back(global_pose);
+  global_local.push_back(pose_local);
 
   return global_local;
 }

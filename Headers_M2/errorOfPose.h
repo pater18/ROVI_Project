@@ -1,3 +1,5 @@
+#pragma once
+
 #include <rw/invkin.hpp>
 #include <rw/core/Log.hpp>
 #include <rw/core.hpp>
@@ -61,19 +63,24 @@ std::vector<double> calcErrorOnPose(rw::math::Transform3D<> pose, std::vector<Ma
 
 
     rw::math::Transform3D<> frameScannerTBottle = rw::kinematics::Kinematics::frameTframe(scannerFrame, bottleFrame, state);
-    rw::math::Transform3D<> frameScannerTTable = rw::kinematics::Kinematics::frameTframe(scannerFrame, tableFrame, state);
-    rw::math::Transform3D<> frameTableTWorld = rw::kinematics::Kinematics::frameTframe(tableFrame, worldFrame, state);
+    // rw::math::Transform3D<> frameScannerTTable = rw::kinematics::Kinematics::frameTframe(scannerFrame, tableFrame, state);
+    // rw::math::Transform3D<> frameTableTWorld = rw::kinematics::Kinematics::frameTframe(tableFrame, worldFrame, state);
 
-    rw::math::Transform3D<> frameWorldTTable = rw::kinematics::Kinematics::frameTframe(worldFrame, tableFrame, state);
-    rw::math::Transform3D<> frameTableTScanner = rw::kinematics::Kinematics::frameTframe(tableFrame, scannerFrame, state);
-    Eigen::Matrix4f frameWorldTTable_e = frameWorldTTable.e().cast<float> ();
-    Eigen::Matrix4f frameTableTScanner_e = frameScannerTTable.e().cast<float> ();
+    rw::math::Transform3D<> frameWorldTScanner = rw::kinematics::Kinematics::worldTframe(scannerFrame, state);
+
+    // rw::math::Transform3D<> frameWorldTTable = rw::kinematics::Kinematics::frameTframe(worldFrame, tableFrame, state);
+    // rw::math::Transform3D<> frameTableTScanner = rw::kinematics::Kinematics::frameTframe(tableFrame, scannerFrame, state);
+    // Eigen::Matrix4f frameWorldTTable_e = frameWorldTTable.e().cast<float> ();
+    // Eigen::Matrix4f frameTableTScanner_e = frameScannerTTable.e().cast<float> ();
     Eigen::Matrix4f frameScannerTBottle_e = frameScannerTBottle.e().cast<float> ();
+    Eigen::Matrix4f frameWorldTScanner_e = frameWorldTScanner.e().cast<float> ();
     
     //Eigen::Matrix4d pose_esti_double = pose_esti.cast<double> ();  
 
     Matrix4f final_pose = pose_esti[1] * pose_esti[0];
-    poses_for_rrt.push_back(final_pose);
+    poses_for_rrt.push_back(frameWorldTScanner_e * final_pose);
+
+    std::cout << frameWorldTScanner_e *  final_pose << std::endl;
 
     double error_pos = pow(final_pose(0, 3) - frameScannerTBottle_e(0,3), 2) + pow(final_pose(1, 3) - frameScannerTBottle_e(1,3), 2) + pow(final_pose(2, 3) - frameScannerTBottle_e(2,3), 2);
     error_pos = sqrt(error_pos);

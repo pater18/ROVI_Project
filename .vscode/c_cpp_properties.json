@@ -13,7 +13,8 @@
                 "/usr/include/opencv4",
                 "/usr/include/pcl-1.10",
                 "/usr/include/vtk-7.1",
-                "/usr/local/include/opencv4"
+                "/usr/local/include/opencv4",
+                "${workspaceFolder}"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <pcl/point_cloud.h>
 #include <pcl/common/random.h>
 #include <pcl/common/time.h>
@@ -64,14 +66,6 @@ pcl::PointCloud<PointT>::Ptr addNoice(const std::string scene_name, float std)
         scene_filtered->points[point_i].y = scene->points[point_i].y + (distribution(generator));
         scene_filtered->points[point_i].z = scene->points[point_i].z + (distribution(generator));
     }
-
-
-    // {
-    //     PCLVisualizer v("Before global alignment2");
-    //     v.addPointCloud<PointT>(scene_filtered, PointCloudColorHandlerCustom<PointT>(scene_filtered, 255, 0, 0),"scene2");
-    //     v.spin();
-    //     v.close ();
-    // }
 
     return scene_filtered;
 }

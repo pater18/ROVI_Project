@@ -1,3 +1,5 @@
+#pragma once
+
 #include <rw/invkin.hpp>
 #include <rwlibs/proximitystrategies/ProximityStrategyFactory.hpp>
 #include <rw/core/Log.hpp>
@@ -18,13 +20,7 @@
 #include <rwlibs/simulation/GLFrameGrabber25D.hpp>
 #include <rwlibs/simulation/SimulatedCamera.hpp>
 #include <rwlibs/simulation/SimulatedScanner25D.hpp>
-
 #include <rwslibs/rwstudioapp/RobWorkStudioApp.hpp>
-#include "Camera.h"
-#include "PCL.h"
-//#include "poseEstimate.h"
-// #include <opencv2/opencv.hpp>
-// #include <opencv2/features2d/features2d.hpp>
 
 #include <iostream>
 #include <string>
@@ -39,15 +35,11 @@ std::vector<rw::math::Transform3D<>> makePointCloudFromScene(std::vector<rw::mat
 {
 
     rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
-    //printDeviceNames(*wc);
 
     if (NULL == wc)
     {
         RW_THROW("COULD NOT LOAD scene... check path!");
     }
-
-    // MyCamera camera_left("Camera_Left", wc);
-    // MyCamera camera_right("Camera_Right", wc);
 
     Frame *const scanner25d = wc->findFrame("Scanner25D");
     if (scanner25d == nullptr)
@@ -70,27 +62,7 @@ std::vector<rw::math::Transform3D<>> makePointCloudFromScene(std::vector<rw::mat
         RW_THROW("COULD not find movable frame bottle ... check model");
     }
 
-    // // Bottle poses
-    // std::vector<Vector3D<>> vectors;
-    // vectors.push_back(Vector3D<>(-0.30, 0.40, 0.21));
-    // vectors.push_back(Vector3D<>(-0.30, 0.50, 0.21));
-    // vectors.push_back(Vector3D<>(-0.10, 0.40, 0.21));
-    // vectors.push_back(Vector3D<>(-0.10, 0.50, 0.21));
-    // vectors.push_back(Vector3D<>(0.10, 0.40, 0.21));
-    // vectors.push_back(Vector3D<>(0.10, 0.50, 0.21));
-    // vectors.push_back(Vector3D<>(0.30, 0.40, 0.21));
-    // vectors.push_back(Vector3D<>(0.30, 0.50, 0.21));
 
-    // RPY<> R1 = RPY<>(-1.571, 0, 1.571);
-
-    // std::vector<rw::math::Transform3D<>> bottle_transformations;
-    // rw::math::Transform3D<> temp = Transform3D<>(vectors[0], R1.toRotation3D());
-
-    // for (size_t i = 0; i < vectors.size(); i++)
-    // {
-    //     temp = Transform3D<>(vectors[i], R1.toRotation3D());
-    //     bottle_transformations.push_back(temp);
-    // }
 
     State state = wc->getDefaultState();
 
@@ -106,11 +78,8 @@ std::vector<rw::math::Transform3D<>> makePointCloudFromScene(std::vector<rw::mat
         State state_studio = rwstudio->getState();
 
         const SceneViewer::Ptr gldrawer = rwstudio->getView()->getSceneViewer();
-        // const GLFrameGrabber::Ptr framegrabber_left = ownedPtr (new GLFrameGrabber (camera_left.getwidth(), camera_left.getheight(), camera_left.getfovy()));
-        // const GLFrameGrabber::Ptr framegrabber_right = ownedPtr (new GLFrameGrabber (camera_right.getwidth(), camera_right.getheight(), camera_right.getfovy()));
         const GLFrameGrabber25D::Ptr framegrabber_depth = ownedPtr(new GLFrameGrabber25D(width, height, fovy));
-        // framegrabber_left->init (gldrawer);
-        // framegrabber_right->init (gldrawer);
+
         framegrabber_depth->init(gldrawer);
 
         SimulatedScanner25D::Ptr simscanner25d = ownedPtr(new SimulatedScanner25D("SimulatedScanner25D", scanner25d, framegrabber_depth));
@@ -132,7 +101,6 @@ std::vector<rw::math::Transform3D<>> makePointCloudFromScene(std::vector<rw::mat
 
             while (!simscanner25d->isScanReady())
             {
-                //std::cout << "Pointcloud is not ready yet. Iteration " << cnt << std::endl;
                 simscanner25d->update(info, state_studio);
                 cnt++;
             }

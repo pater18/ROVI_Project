@@ -11,6 +11,7 @@ add_compile_options(-std=c++17)
 # Used to resolve absolute path names
 SET(ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 
+
 set(CMAKE_VERBOSE_MAKEFILE false) 
 
 # Now set the RW root
@@ -66,11 +67,16 @@ FIND_PACKAGE(OpenMP)
   ENDIF()
 
 file(GLOB SOURCES src/*.cpp)
+file(GLOB_RECURSE HEADERS               # Fetch all of the Lib's Headers 
+   ${CMAKE_CURRENT_SOURCE_DIR}/Headers_M2/*.h)
+   
 
 
 # LIBRARIES ---------------------------------------------------------------------------------------------------------------------------------------------
 add_executable(Interpolation ${SOURCES})
 target_link_libraries(Interpolation ${ROBWORK_LIBRARIES} ${ROBWORKSTUDIO_LIBRARIES} ${OpenCV_LIBS} ${PCL_LIBRARIES})
+target_include_directories(Interpolation PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
 
 
 

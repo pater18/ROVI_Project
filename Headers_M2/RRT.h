@@ -1,3 +1,4 @@
+#pragma once
 
 //#include <rw/rw.hpp>
 #include <rw/invkin.hpp>
@@ -178,7 +179,9 @@ int rrtPlanning(std::vector<Eigen::Matrix4f> bottle_positions_esti)
     for (size_t i = 0; i < bottle_positions_esti.size(); i++)
     {
         temp = Transform3D<>(bottle_positions_esti[i]);
+        //temp(2, 3) = 0.13; 
         bottle_placements.push_back(temp);
+        std::cout << temp << std::endl;
     }
 
 	std::vector<double> placement1_total_times;
@@ -187,7 +190,7 @@ int rrtPlanning(std::vector<Eigen::Matrix4f> bottle_positions_esti)
 	std::vector<double> placement1_total_length;
 	std::vector<double> placement2_total_length;
 	std::vector<double> placement3_total_length;
-	int num_experiments = 3;
+	int num_experiments = 1;
 	for (int k = 0; k < num_experiments; k++)
 	{
 		std::cout << "This is K-iteration " << k + 1 << " / " << num_experiments << std::endl;
@@ -198,7 +201,7 @@ int rrtPlanning(std::vector<Eigen::Matrix4f> bottle_positions_esti)
 					  << std::endl;
 
 			//load workcell
-			rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../Scene.wc.xml");
+			rw::models::WorkCell::Ptr wc = rw::loaders::WorkCellLoader::Factory::load("../scene_obstacle.wc.xml");
 
 			//printDeviceNames(*wc);
 
@@ -253,7 +256,7 @@ int rrtPlanning(std::vector<Eigen::Matrix4f> bottle_positions_esti)
 			//rw::proximity::CollisionDetector::Ptr detector = rw::common::ownedPtr(new rw::proximity::CollisionDetector(wc, rwlibs::proximitystrategies::ProximityStrategyFactory::makeCollisionStrategy("PQP")));
 
 			std::vector<rw::math::Q> collisionFreeSolutions;
-
+            std::cout << solutions.size() << std::endl;
 			for (unsigned int j = 0; j < solutions.size() - 1; j++)
 			{
 				// set the robot in that configuration and check if it is in collision
